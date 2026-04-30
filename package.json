@@ -1,0 +1,44 @@
+{
+  "name": "ascii-globe",
+  "version": "0.1.0",
+  "description": "Isomorphic ASCII globe renderer",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": {
+    "globe": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "extract": "tsx scripts/extract-texture.ts",
+    "build": "tsup",
+    "prepublishOnly": "npm run build",
+    "example:node": "tsx examples/node-animation.ts",
+    "example:browser": "echo 'Open examples/browser/index.html via a local server'"
+  },
+  "keywords": [
+    "ascii",
+    "globe",
+    "terminal",
+    "earth",
+    "ascii-art"
+  ],
+  "author": "Jakub T. Jankiewicz <jcubic@onet.pl> (https://jakub.jankiewicz.org/)",
+  "license": "MIT",
+  "devDependencies": {
+    "sharp": "^0.33.0",
+    "tsup": "^8.5.1",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCII Globe</title>
+<style>
+  body {
+    background: #fff;
+    color: #000;
+    font-family: sans-serif;
+    margin: 20px;
+  }
+  #globe {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+  .controls {
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  button {
+    padding: 6px 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  label {
+    font-size: 14px;
+  }
+  input[type="number"] {
+    width: 80px;
+    padding: 4px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<pre id="globe"></pre>
+<div class="controls">
+  <button id="toggle">Pause</button>
+  <label>Rotation: <input id="rotation" type="number" min="0" max="360" step="0.1" value="0" disabled></label>
+</div>
+
+<script type="module">
+import Globe from '../../dist/index.js';
+
+const globe = new Globe({ size: 1, land: '#', water: ' ' });
+const pre = document.getElementById('globe');
+const toggleBtn = document.getElementById('toggle');
+const rotInput = document.getElementById('rotation');
+
+let playing = true;
+let rotation = 0;
+const SPEED = 0.7;
+
+function frame() {
+  pre.textContent = globe.render(rotation);
+  rotInput.value = rotation.toFixed(1);
+  if (playing) {
+    rotation = (rotation + SPEED) % 360;
+    requestAnimationFrame(frame);
+  }
+}
+
+toggleBtn.addEventListener('click', () => {
+  playing = !playing;
+  toggleBtn.textContent = playing ? 'Pause' : 'Play';
+  rotInput.disabled = playing;
+  if (playing) frame();
+});
+
+rotInput.addEventListener('input', () => {
+  rotation = parseFloat(rotInput.value) || 0;
+  if (!playing) frame();
+});
+
+frame();
+</script>
+</body>
+</html>
