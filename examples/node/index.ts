@@ -25,7 +25,7 @@ const globe = new Globe({
   format(type, length) {
     const chars = [' ', '-', '#', '@'];
     const colors = ['', '\x1B[34m', '\x1B[32m', '\x1B[31m'];
-    const text = (chars[type] ?? textars[3]).repeat(length);
+    const text = (chars[type] ?? chars[3]).repeat(length);
     const color = colors[type] ?? colors[3];
     if (!color) return text;
     return color + text + '\x1B[m';
