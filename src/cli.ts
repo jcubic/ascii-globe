@@ -14,6 +14,9 @@ Options:
   --margin <number>     Characters around the globe (default: 0)
   --margin-block <n>    Vertical margin (overrides --margin)
   --margin-inline <n>   Horizontal margin (overrides --margin)
+  --pin <char>          Character for location pins (default: @)
+  --pin-size <number>   Size of pin markers (default: 1)
+  --pins <coords>       Pin locations as lat,long pairs separated by ;
   --help                Show this help message
 
 Either --rotation or --animate is required.
@@ -23,6 +26,7 @@ Examples:
   globe --animate
   globe --animate --size 1.5 --land '#' --water '-'
   globe --rotation 0 --background '.' --margin 3
+  globe --rotation 20 --pins '52.23,21.01;40.71,-74.01'
 `;
 
 function parseArgs(argv: string[]) {
@@ -77,14 +81,57 @@ if (marginInline !== undefined && isNaN(marginInline)) {
   process.exit(1);
 }
 
+let pins: Array<{ lat: number; long: number }> | undefined;
+if (args.pins) {
+  pins = args.pins.split(';').map(pair => {
+    const [latStr, longStr] = pair.split(',');
+    const lat = parseFloat(latStr);
+    const long = parseFloat(longStr);
+    if (isNaN(lat) || isNaN(long)) {
+      process.stderr.write(`Error: invalid pin coordinates "${pair}"\n`);
+      process.exit(1);
+    }
+    return { lat, long };
+  });
+}
+
+function unescapeAnsi(s: string): string {
+  return s.replace(/\\x1b/gi, '\x1B').replace(/\\e/g, '\x1B').replace(/\\033/g, '\x1B');
+}
+
+const ANSI_RE = /^(\x1B\[[0-9;]*m)*(.)(\x1B\[[0-9;]*m)*$/;
+
+function splitAnsi(s: string): { prefix: string; char: string; suffix: string } {
+  const match = s.match(ANSI_RE);
+  if (match) {
+    return { prefix: match[1] ?? '', char: match[2], suffix: match[3] ?? '' };
+  }
+  return { prefix: '', char: s, suffix: '' };
+}
+
+const pinRaw = args.pin ? unescapeAnsi(args.pin) : '@';
+const pinParts = splitAnsi(pinRaw);
+
+const chars = [
+  args.background ?? ' ',
+  args.water ?? '-',
+  args.land ?? '#',
+  pinParts.char,
+];
+
 const globe = new Globe({
   size,
-  land: args.land,
-  water: args.water,
-  background: args.background,
   margin,
   marginBlock,
   marginInline,
+  pinSize: args['pin-size'] !== undefined ? parseFloat(args['pin-size']) : undefined,
+  pins,
+  format(type, length) {
+    const ch = chars[type] ?? chars[3];
+    const text = ch.repeat(length);
+    if (type >= 3) return pinParts.prefix + text + pinParts.suffix;
+    return text;
+  },
 });
 
 if (args.animate) {

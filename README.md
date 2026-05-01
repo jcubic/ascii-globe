@@ -84,6 +84,48 @@ Creates a new globe instance.
 | `margin`       | `number` | `0`     | Number of characters around the globe disk.         |
 | `marginBlock`  | `number` | `0`     | Vertical margin (overrides `margin`).               |
 | `marginInline` | `number` | `0`     | Horizontal margin (overrides `margin`).             |
+| `pin`          | `string` | `'@'`   | Default character for location pins. Can include ANSI escape codes. |
+| `pinSize`      | `number` | `1`     | Default size multiplier for pin markers.            |
+| `pins`         | `Pin[]`  | `[]`    | Array of pin locations.                             |
+| `format`       | `function` | —     | Callback `(type, length) => string` for custom output (see below). |
+
+#### Pin object
+
+| Property | Type     | Required | Description                                                        |
+|----------|----------|----------|--------------------------------------------------------------------|
+| `lat`    | `number` | yes      | Latitude in degrees (-90 to 90).                                   |
+| `long`   | `number` | yes      | Longitude in degrees (-180 to 180).                                |
+| `char`   | `string` | no       | Override character for this pin. Can include ANSI escape codes.    |
+| `size`   | `number` | no       | Size multiplier for this pin (overrides `pinSize`).                |
+
+#### `format(type, length)`
+
+When provided, `render()` calls this function for each run of consecutive cells of the same type instead of using the `land`/`water`/`background`/`pin` characters. This lets you wrap output in HTML tags, ANSI codes, or any other markup.
+
+| Type value | Meaning    |
+|------------|------------|
+| `0`        | Background |
+| `1`        | Water      |
+| `2`        | Land       |
+| `3+`       | Pin (index `type - 3` in the `pins` array) |
+
+Example — HTML colored output:
+
+```javascript
+const globe = new Globe({
+  size: 1,
+  pins: [{ lat: 52.23, long: 21.01 }],
+  format(type, length) {
+    const chars = [' ', ' ', '#', '@'];
+    const colors = ['', '', 'green', 'red'];
+    const text = chars[type].repeat(length);
+    if (!colors[type]) return text;
+    return `<span style="color:${colors[type]}">${text}</span>`;
+  }
+});
+
+pre.innerHTML = globe.render(250);
+```
 
 ### `globe.render(rotation)`
 
@@ -121,9 +163,19 @@ Options:
   --margin <number>     Characters around the globe (default: 0)
   --margin-block <n>    Vertical margin (overrides --margin)
   --margin-inline <n>   Horizontal margin (overrides --margin)
+  --pin <char>          Character for location pins (default: @)
+  --pin-size <number>   Size of pin markers (default: 1)
+  --pins <coords>       Pin locations as lat,long pairs separated by ;
   --help                Show this help message
 
 Either --rotation or --animate is required.
+```
+
+Example with pins (Warsaw and New York):
+
+```bash
+globe --rotation 250 --pins '52.23,21.01;40.71,-74.01'
+globe --rotation 250 --pin '\x1b[31m@\x1b[m' --pins '52.23,21.01'
 ```
 
 ## Examples

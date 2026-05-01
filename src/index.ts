@@ -1,5 +1,12 @@
 import { getTextureData } from './data';
 
+export interface Pin {
+  lat: number;
+  long: number;
+  char?: string;
+  size?: number;
+}
+
 export interface GlobeOptions {
   size?: number;
   land?: string;
@@ -8,6 +15,10 @@ export interface GlobeOptions {
   margin?: number;
   marginBlock?: number;
   marginInline?: number;
+  pin?: string;
+  pinSize?: number;
+  pins?: Pin[];
+  format?: (type: number, length: number) => string;
 }
 
 const INV_PI = 1 / Math.PI;
@@ -25,6 +36,10 @@ export default class Globe {
   private background: string;
   private marginBlock: number;
   private marginInline: number;
+  private pinChar: string;
+  private pinSize: number;
+  private pins: Pin[];
+  private formatFn?: (type: number, length: number) => string;
   private texW: number;
   private texH: number;
   private texMask: Uint8Array;
@@ -38,6 +53,10 @@ export default class Globe {
     const m = options.margin ?? 0;
     this.marginBlock = options.marginBlock ?? m;
     this.marginInline = options.marginInline ?? m;
+    this.pinChar = options.pin ?? '@';
+    this.pinSize = options.pinSize ?? 1;
+    this.pins = options.pins ?? [];
+    this.formatFn = options.format;
 
     this.cols = Math.round(120 * size);
     this.rows = Math.round(60 * size);
@@ -57,12 +76,18 @@ export default class Globe {
     const cx = this.cols * 0.5;
     const cy = this.rows * 0.5;
     const invR = 1 / this.radius;
-    const { cols, rows, texW, texH, texMask, prevLand, land, water, background, aspect } = this;
+    const { cols, rows, texW, texH, texMask, prevLand, land, water, background, aspect, pins, pinChar, pinSize, formatFn } = this;
+    const baseThreshold = 1.5 / this.radius;
+    const pinsRad = pins.map(p => ({
+      lat: p.lat * DEG_TO_RAD,
+      long: p.long * DEG_TO_RAD,
+      char: p.char ?? pinChar,
+      threshold: baseThreshold * (p.size ?? pinSize),
+    }));
 
-    const rowBuf: string[] = new Array(rows);
+    const grid = new Uint8Array(rows * cols);
 
     for (let row = 0; row < rows; row++) {
-      let line = '';
       const sy = (cy - row) * invR * aspect;
       const sy2 = sy * sy;
 
@@ -71,7 +96,6 @@ export default class Globe {
         const r2 = sx * sx + sy2;
 
         if (r2 > 1) {
-          line += background;
           continue;
         }
 
@@ -113,28 +137,65 @@ export default class Globe {
         const threshold = prev ? HYST_LO : HYST_HI;
         prevLand[cellIdx] = interp >= threshold ? 1 : 0;
 
-        line += prevLand[cellIdx] ? land : water;
+        let cellType = prevLand[cellIdx] ? 2 : 1;
+        for (let p = 0; p < pinsRad.length; p++) {
+          const pin = pinsRad[p];
+          const dLat = lat - pin.lat;
+          let dLon = lon - pin.long;
+          if (dLon > Math.PI) dLon -= 2 * Math.PI;
+          if (dLon < -Math.PI) dLon += 2 * Math.PI;
+          const lonScaled = dLon * (Math.cos(pin.lat) || 0.01);
+          if (dLat * dLat + lonScaled * lonScaled < pin.threshold * pin.threshold) {
+            cellType = 3 + p;
+            break;
+          }
+        }
+        grid[cellIdx] = cellType;
       }
-      rowBuf[row] = line;
     }
 
-    return this.trimToDisk(rowBuf);
-  }
-
-  private trimToDisk(rows: string[]): string {
-    const cx = this.cols * 0.5;
-    const cy = this.rows * 0.5;
-    const radV = this.radius / this.aspect;
+    const radV = this.radius / aspect;
     const mi = this.marginInline;
     const mb = this.marginBlock;
     const left = Math.max(0, Math.ceil(cx - this.radius) - mi);
-    const right = Math.min(this.cols, Math.floor(cx + this.radius) + 1 + mi);
+    const right = Math.min(cols, Math.floor(cx + this.radius) + 1 + mi);
     const top = Math.max(0, Math.ceil(cy - radV) - mb);
-    const bottom = Math.min(rows.length, Math.floor(cy + radV) + 1 + mb);
+    const bottom = Math.min(rows, Math.floor(cy + radV) + 1 + mb);
+
     const out: string[] = [];
-    for (let i = top; i < bottom; i++) {
-      out.push(rows[i].substring(left, right));
+
+    if (formatFn) {
+      for (let row = top; row < bottom; row++) {
+        let line = '';
+        let runType = grid[row * cols + left];
+        let runLen = 1;
+        for (let col = left + 1; col < right; col++) {
+          const t = grid[row * cols + col];
+          if (t === runType) {
+            runLen++;
+          } else {
+            line += formatFn(runType, runLen);
+            runType = t;
+            runLen = 1;
+          }
+        }
+        line += formatFn(runType, runLen);
+        out.push(line);
+      }
+    } else {
+      for (let row = top; row < bottom; row++) {
+        let line = '';
+        for (let col = left; col < right; col++) {
+          const t = grid[row * cols + col];
+          if (t === 0) line += background;
+          else if (t === 1) line += water;
+          else if (t === 2) line += land;
+          else line += pinsRad[t - 3].char;
+        }
+        out.push(line);
+      }
     }
+
     return out.join('\n');
   }
 }
