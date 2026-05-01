@@ -75,12 +75,12 @@ document.getElementById('output').textContent = globe.render(0);
 
 Creates a new globe instance.
 
-| Option       | Type     | Default | Description                                         |
-|--------------|----------|---------|-----------------------------------------------------|
-| `size`       | `number` | `1.4`   | Scale factor. `1` produces a 120x60 character grid. |
-| `land`       | `string` | `'#'`   | Character used to render land masses.               |
-| `water`      | `string` | `'-'`   | Character used to render water/ocean.               |
-| `background` | `string` | `' '`   | Character used for the area outside the globe disk. |
+| Option         | Type     | Default | Description                                         |
+|----------------|----------|---------|-----------------------------------------------------|
+| `size`         | `number` | `1.4`   | Scale factor. `1` produces a 120x60 character grid. |
+| `land`         | `string` | `'#'`   | Character used to render land masses.               |
+| `water`        | `string` | `'-'`   | Character used to render water/ocean.               |
+| `background`   | `string` | `' '`   | Character used for the area outside the globe disk. |
 | `margin`       | `number` | `0`     | Number of characters around the globe disk.         |
 | `marginBlock`  | `number` | `0`     | Vertical margin (overrides `margin`).               |
 | `marginInline` | `number` | `0`     | Horizontal margin (overrides `margin`).             |
