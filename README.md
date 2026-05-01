@@ -218,20 +218,20 @@ var pre = document.getElementById('globe');
 var playing = true;
 var rotation = 0;
 
-function frame() {
+function loop() {
   pre.textContent = globe.render(rotation);
   if (playing) {
     rotation = (rotation + 0.7) % 360;
-    requestAnimationFrame(frame);
+    requestAnimationFrame(loop);
   }
 }
 
 document.getElementById('toggle').addEventListener('click', function() {
   playing = !playing;
-  if (playing) frame();
+  if (playing) loop();
 });
 
-frame();
+loop();
 </script>
 ```
 

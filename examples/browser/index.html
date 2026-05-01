@@ -78,12 +78,12 @@ let playing = true;
 let rotation = 0;
 const SPEED = 0.3;
 
-function frame() {
+function loop() {
   pre.innerHTML = globe.render(rotation);
   rotInput.value = rotation.toFixed(1);
   if (playing) {
     rotation = (rotation + SPEED) % 360;
-    requestAnimationFrame(frame);
+    requestAnimationFrame(loop);
   }
 }
 
@@ -91,12 +91,12 @@ toggleBtn.addEventListener('click', () => {
   playing = !playing;
   toggleBtn.textContent = playing ? 'Pause' : 'Play';
   rotInput.disabled = playing;
-  if (playing) frame();
+  if (playing) loop();
 });
 
 rotInput.addEventListener('input', () => {
   rotation = parseFloat(rotInput.value) || 0;
-  if (!playing) frame();
+  if (!playing) loop();
 });
 
 frame();
