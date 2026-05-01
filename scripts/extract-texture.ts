@@ -70,9 +70,6 @@ async function main() {
     bin[4 + (i >> 1)] = (hi << 4) | lo;
   }
 
-  writeFileSync(resolve(ROOT, 'globe.bin'), bin);
-  console.log(`globe.bin: ${bin.length} bytes (${w}x${h}, ${pixels} pixels)`);
-
   // Generate embedded data module
   const b64 = Buffer.from(bin).toString('base64');
 

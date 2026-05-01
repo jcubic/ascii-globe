@@ -241,7 +241,7 @@ Open `examples/browser/index.html` via a local server to run the included browse
 
 ```bash
 npm install
-npm run extract   # generate globe.bin and src/data.ts from globe.png
+npm run extract   # generate src/data.ts from globe.png
 npm run build     # compile TypeScript to dist/
 ```
 
