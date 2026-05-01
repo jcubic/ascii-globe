@@ -73,8 +73,10 @@ const globe = new Globe({
 
 if (args.animate) {
   let rotation = args.rotation !== undefined ? parseFloat(args.rotation) : 0;
-  const lines = globe.render(0).split('\n').length;
-  const clearLine = '\x1B[2K';
+  const frameLines = globe.render(0).split('\n');
+  const termRows = process.stdout.rows || frameLines.length;
+  const lines = Math.min(frameLines.length, termRows - 1);
+  const offset = Math.max(0, Math.floor((frameLines.length - lines) / 2));
   process.stdout.write('\x1B[?25l');
   process.on('SIGINT', () => {
     process.stdout.write('\x1B[?25h\n');
@@ -83,12 +85,12 @@ if (args.animate) {
   let first = true;
   setInterval(() => {
     if (!first) {
-      process.stdout.write(`\x1B[${lines - 1}A\r`);
+      process.stdout.write(`\x1B[${lines}F`);
     }
     first = false;
-    const frame = globe.render(rotation);
-    const output = frame.split('\n').map(line => clearLine + line).join('\n');
-    process.stdout.write(output);
+    const frame = globe.render(rotation).split('\n').slice(offset, offset + lines);
+    const output = frame.map(line => '\x1B[2K' + line).join('\n');
+    process.stdout.write(output + '\n');
     rotation = (rotation + 0.7) % 360;
   }, 1000 / 30);
 } else {
