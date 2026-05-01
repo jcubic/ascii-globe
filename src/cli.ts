@@ -9,7 +9,7 @@ Options:
   --animate             Animate the globe in the terminal
   --size <number>       Globe size multiplier (default: 1.4)
   --land <char>         Character for land (default: #)
-  --water <char>        Character for water (default: " ")
+  --water <char>        Character for water (default: -)
   --background <char>   Character for background (default: " ")
   --margin <number>     Characters around the globe (default: 0)
   --help                Show this help message

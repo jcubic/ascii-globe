@@ -30,7 +30,7 @@ export default class Globe {
   constructor(options: GlobeOptions = {}) {
     const size = options.size ?? 1.4;
     this.land = options.land ?? '#';
-    this.water = options.water ?? ' ';
+    this.water = options.water ?? '-';
     this.background = options.background ?? ' ';
     this.margin = options.margin ?? 0;
 

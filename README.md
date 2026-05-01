@@ -79,7 +79,7 @@ Creates a new globe instance.
 |--------------|----------|---------|-----------------------------------------------------|
 | `size`       | `number` | `1.4`   | Scale factor. `1` produces a 120x60 character grid. |
 | `land`       | `string` | `'#'`   | Character used to render land masses.               |
-| `water`      | `string` | `' '`   | Character used to render water/ocean.               |
+| `water`      | `string` | `'-'`   | Character used to render water/ocean.               |
 | `background` | `string` | `' '`   | Character used for the area outside the globe disk. |
 | `margin`     | `number` | `0`     | Number of characters around the globe disk.         |
 
@@ -114,7 +114,7 @@ Options:
   --animate             Animate the globe in the terminal
   --size <number>       Globe size multiplier (default: 1.4)
   --land <char>         Character for land (default: #)
-  --water <char>        Character for water (default: " ")
+  --water <char>        Character for water (default: -)
   --background <char>   Character for background (default: " ")
   --margin <number>     Characters around the globe (default: 0)
   --help                Show this help message
