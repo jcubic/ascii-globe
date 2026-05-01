@@ -6,6 +6,8 @@
 
 Zero dependencies isomorphic ASCII-Art globe renderer in JavaScript.
 
+See [Live Demo](https://codepen.io/jcubic/full/EaNaRVp)
+
 ## Installation
 
 ### npm
