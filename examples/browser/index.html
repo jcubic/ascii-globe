@@ -6,15 +6,16 @@
 <title>ASCII Globe</title>
 <style>
   body {
-    background: #fff;
-    color: #000;
+    background: #383838;
+    color: #fff;
     font-family: sans-serif;
     margin: 20px;
   }
   #globe {
     font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
     font-size: 12px;
-    line-height: 1;
+    line-height: 1.3;
     letter-spacing: 0.05em;
   }
   .controls {
@@ -49,17 +50,36 @@
 <script type="module">
 import Globe from '../../dist/index.js';
 
-const globe = new Globe({ size: 1, land: '#', water: ' ' });
+const chars = [' ', '-', '#', '@'];
+const colors = ['', '', '#2d5', 'red'];
+
+const globe = new Globe({
+    size: 1.4,
+    pins: [
+        { lat: 52.23, long: 21.01 },   // Warsaw
+        { lat: 40.71, long: -74.01 },  // New York
+        { lat: 39.90, long: 116.40 },  // Beijing
+        { lat: -22.91, long: -43.17 }, // Rio de Janeiro
+        { lat: -26.20, long: 28.04 },  // Johannesburg
+        { lat: -37.81, long: 144.96 }, // Melbourne
+    ],
+    format(type, length) {
+        const text = (chars[type] ?? chars[3]).repeat(length);
+        const color = colors[type] ?? colors[3];
+        if (!color) return text;
+        return `<span style="color:${color}">${text}</span>`;
+    }
+});
 const pre = document.getElementById('globe');
 const toggleBtn = document.getElementById('toggle');
 const rotInput = document.getElementById('rotation');
 
 let playing = true;
 let rotation = 0;
-const SPEED = 0.7;
+const SPEED = 0.3;
 
 function frame() {
-  pre.textContent = globe.render(rotation);
+  pre.innerHTML = globe.render(rotation);
   rotInput.value = rotation.toFixed(1);
   if (playing) {
     rotation = (rotation + SPEED) % 360;
