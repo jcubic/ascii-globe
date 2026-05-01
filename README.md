@@ -37,8 +37,8 @@
 |__| |__||_______||_______||___| |___|        |_______||_______||_______||_______||_______|
 ```
 
-[Isomorphic ASCII globe renderer](https://github.com/jcubic/ascii-globe). Works in Node.js and the
-browser with zero dependencies.
+[Isomorphic ASCII-Art globe renderer in JavaScript](https://github.com/jcubic/ascii-globe). Works in
+Node.js and the browser with zero dependencies.
 
 ## Installation
 
