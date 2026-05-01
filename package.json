@@ -1,6 +1,6 @@
 {
   "name": "ascii-globe",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Isomorphic ASCII globe renderer",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -24,6 +24,7 @@
   "scripts": {
     "extract": "tsx scripts/extract-texture.ts",
     "build": "tsup",
+    "version": "sed -i \"s/npm-[0-9]*\\.[0-9]*\\.[0-9]*/npm-$npm_package_version/\" README.md",
     "prepublishOnly": "npm run build",
     "example:node": "tsx examples/node-animation.ts",
     "example:browser": "echo 'Open examples/browser/index.html via a local server'"

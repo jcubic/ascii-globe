@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.2.4-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.1.0-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 [![LICENSE MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jcubic/ascii-globe/blob/master/LICENSE)
 
@@ -95,6 +95,7 @@ The returned string contains newline-separated rows forming the globe disk.
 
 ```bash
 npx ascii-globe --rotation 200
+npx ascii-globe --animate
 ```
 
 Or install globally:
@@ -102,19 +103,23 @@ Or install globally:
 ```bash
 npm install -g ascii-globe
 globe --rotation 200
+globe --animate
 ```
 
 ```
-Usage: globe --rotation <degrees> [options]
+Usage: globe <--rotation <degrees> | --animate> [options]
 
 Options:
-  --rotation <degrees>  Rotation angle in degrees (required)
+  --rotation <degrees>  Rotation angle in degrees
+  --animate             Animate the globe in the terminal
   --size <number>       Globe size multiplier (default: 1.4)
   --land <char>         Character for land (default: #)
   --water <char>        Character for water (default: " ")
   --background <char>   Character for background (default: " ")
   --margin <number>     Characters around the globe (default: 0)
   --help                Show this help message
+
+Either --rotation or --animate is required.
 ```
 
 ## Examples
