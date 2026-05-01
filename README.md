@@ -1,7 +1,10 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[Isomorphic ASCII-Art globe renderer in JavaScript](https://github.com/jcubic/ascii-globe). Works in
-Node.js and the browser with zero dependencies.
+[![npm](https://img.shields.io/badge/npm-0.2.4-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
+[![LICENSE MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jcubic/ascii-globe/blob/master/LICENSE)
+
+Zero dependencies isomorphic ASCII-Art globe renderer in JavaScript.
 
 ## Installation
 
