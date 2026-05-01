@@ -12,6 +12,8 @@ Options:
   --water <char>        Character for water (default: -)
   --background <char>   Character for background (default: " ")
   --margin <number>     Characters around the globe (default: 0)
+  --margin-block <n>    Vertical margin (overrides --margin)
+  --margin-inline <n>   Horizontal margin (overrides --margin)
   --help                Show this help message
 
 Either --rotation or --animate is required.
@@ -63,12 +65,26 @@ if (margin !== undefined && isNaN(margin)) {
   process.exit(1);
 }
 
+const marginBlock = args['margin-block'] !== undefined ? parseInt(args['margin-block'], 10) : undefined;
+if (marginBlock !== undefined && isNaN(marginBlock)) {
+  process.stderr.write(`Error: invalid margin-block value "${args['margin-block']}"\n`);
+  process.exit(1);
+}
+
+const marginInline = args['margin-inline'] !== undefined ? parseInt(args['margin-inline'], 10) : undefined;
+if (marginInline !== undefined && isNaN(marginInline)) {
+  process.stderr.write(`Error: invalid margin-inline value "${args['margin-inline']}"\n`);
+  process.exit(1);
+}
+
 const globe = new Globe({
   size,
   land: args.land,
   water: args.water,
   background: args.background,
   margin,
+  marginBlock,
+  marginInline,
 });
 
 if (args.animate) {

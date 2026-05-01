@@ -81,7 +81,9 @@ Creates a new globe instance.
 | `land`       | `string` | `'#'`   | Character used to render land masses.               |
 | `water`      | `string` | `'-'`   | Character used to render water/ocean.               |
 | `background` | `string` | `' '`   | Character used for the area outside the globe disk. |
-| `margin`     | `number` | `0`     | Number of characters around the globe disk.         |
+| `margin`       | `number` | `0`     | Number of characters around the globe disk.         |
+| `marginBlock`  | `number` | `0`     | Vertical margin (overrides `margin`).               |
+| `marginInline` | `number` | `0`     | Horizontal margin (overrides `margin`).             |
 
 ### `globe.render(rotation)`
 
@@ -117,6 +119,8 @@ Options:
   --water <char>        Character for water (default: -)
   --background <char>   Character for background (default: " ")
   --margin <number>     Characters around the globe (default: 0)
+  --margin-block <n>    Vertical margin (overrides --margin)
+  --margin-inline <n>   Horizontal margin (overrides --margin)
   --help                Show this help message
 
 Either --rotation or --animate is required.

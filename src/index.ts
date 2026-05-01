@@ -6,6 +6,8 @@ export interface GlobeOptions {
   water?: string;
   background?: string;
   margin?: number;
+  marginBlock?: number;
+  marginInline?: number;
 }
 
 const INV_PI = 1 / Math.PI;
@@ -21,7 +23,8 @@ export default class Globe {
   private land: string;
   private water: string;
   private background: string;
-  private margin: number;
+  private marginBlock: number;
+  private marginInline: number;
   private texW: number;
   private texH: number;
   private texMask: Uint8Array;
@@ -32,7 +35,9 @@ export default class Globe {
     this.land = options.land ?? '#';
     this.water = options.water ?? '-';
     this.background = options.background ?? ' ';
-    this.margin = options.margin ?? 0;
+    const m = options.margin ?? 0;
+    this.marginBlock = options.marginBlock ?? m;
+    this.marginInline = options.marginInline ?? m;
 
     this.cols = Math.round(120 * size);
     this.rows = Math.round(60 * size);
@@ -120,11 +125,12 @@ export default class Globe {
     const cx = this.cols * 0.5;
     const cy = this.rows * 0.5;
     const radV = this.radius / this.aspect;
-    const m = this.margin;
-    const left = Math.max(0, Math.ceil(cx - this.radius) - m);
-    const right = Math.min(this.cols, Math.floor(cx + this.radius) + 1 + m);
-    const top = Math.max(0, Math.ceil(cy - radV) - m);
-    const bottom = Math.min(rows.length, Math.floor(cy + radV) + 1 + m);
+    const mi = this.marginInline;
+    const mb = this.marginBlock;
+    const left = Math.max(0, Math.ceil(cx - this.radius) - mi);
+    const right = Math.min(this.cols, Math.floor(cx + this.radius) + 1 + mi);
+    const top = Math.max(0, Math.ceil(cy - radV) - mb);
+    const bottom = Math.min(rows.length, Math.floor(cy + radV) + 1 + mb);
     const out: string[] = [];
     for (let i = top; i < bottom; i++) {
       out.push(rows[i].substring(left, right));
