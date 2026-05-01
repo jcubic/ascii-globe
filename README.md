@@ -5,35 +5,80 @@ Node.js and the browser with zero dependencies.
 
 ## Installation
 
+### npm
+
 ```bash
 npm install ascii-globe
 ```
 
+### CDN
+
+```html
+<!-- IIFE (global variable) -->
+<script src="https://cdn.jsdelivr.net/npm/ascii-globe"></script>
+
+<!-- ES Module -->
+<script type="module">
+import Globe from 'https://esm.run/ascii-globe';
+</script>
+```
+
 ## Usage
 
-```typescript
+### ES Module (Node.js / Vite / bundlers)
+
+```javascript
 import Globe from 'ascii-globe';
 
-const globe = new Globe({
-  size: 1.4,   // scale factor (default: 1.4)
-  land: '#',   // character for land (default: '#')
-  water: ' '   // character for water (default: ' ')
-});
-
-// Render at a given rotation (0–360 degrees)
-const frame = globe.render(rotation);
-console.log(frame);
+const globe = new Globe({ size: 1.4 });
+console.log(globe.render(90));
 ```
+
+### CommonJS (Node.js)
+
+```javascript
+const Globe = require('ascii-globe');
+
+const globe = new Globe({ size: 1.4 });
+console.log(globe.render(90));
+```
+
+### Browser (script tag)
+
+```html
+<pre id="output"></pre>
+<script src="https://cdn.jsdelivr.net/npm/ascii-globe"></script>
+<script>
+var globe = new Globe({ size: 1 });
+document.getElementById('output').textContent = globe.render(0);
+</script>
+```
+
+### Browser (ES Module)
+
+```html
+<pre id="output"></pre>
+<script type="module">
+import Globe from 'https://esm.run/ascii-globe';
+
+const globe = new Globe({ size: 1 });
+document.getElementById('output').textContent = globe.render(0);
+</script>
+```
+
+## API
 
 ### `new Globe(options?)`
 
 Creates a new globe instance.
 
-| Option  | Type     | Default | Description                                         |
-|---------|----------|---------|-----------------------------------------------------|
-| `size`  | `number` | `1.4`   | Scale factor. `1` produces a 120x60 character grid. |
-| `land`  | `string` | `'#'`   | Character used to render land masses.               |
-| `water` | `string` | `' '`   | Character used to render water/ocean.               |
+| Option       | Type     | Default | Description                                         |
+|--------------|----------|---------|-----------------------------------------------------|
+| `size`       | `number` | `1.4`   | Scale factor. `1` produces a 120x60 character grid. |
+| `land`       | `string` | `'#'`   | Character used to render land masses.               |
+| `water`      | `string` | `' '`   | Character used to render water/ocean.               |
+| `background` | `string` | `' '`   | Character used for the area outside the globe disk. |
+| `margin`     | `number` | `0`     | Number of characters around the globe disk.         |
 
 ### `globe.render(rotation)`
 
@@ -43,11 +88,37 @@ Returns a string with the ASCII globe rendered at the given rotation angle.
 
 The returned string contains newline-separated rows forming the globe disk.
 
+## CLI
+
+```bash
+npx ascii-globe --rotation 200
+```
+
+Or install globally:
+
+```bash
+npm install -g ascii-globe
+globe --rotation 200
+```
+
+```
+Usage: globe --rotation <degrees> [options]
+
+Options:
+  --rotation <degrees>  Rotation angle in degrees (required)
+  --size <number>       Globe size multiplier (default: 1.4)
+  --land <char>         Character for land (default: #)
+  --water <char>        Character for water (default: " ")
+  --background <char>   Character for background (default: " ")
+  --margin <number>     Characters around the globe (default: 0)
+  --help                Show this help message
+```
+
 ## Examples
 
 ### Node.js terminal animation
 
-```typescript
+```javascript
 import Globe from 'ascii-globe';
 
 const globe = new Globe({ size: 1, land: '#', water: ' ' });
@@ -76,13 +147,12 @@ npm run example:node
 <button id="toggle">Pause</button>
 <input id="rotation" type="number" min="0" max="360" step="0.1" value="0" disabled>
 
-<script type="module">
-import Globe from 'ascii-globe';
-
-const globe = new Globe({ size: 1, land: '#', water: ' ' });
-const pre = document.getElementById('globe');
-let playing = true;
-let rotation = 0;
+<script src="https://cdn.jsdelivr.net/npm/ascii-globe"></script>
+<script>
+var globe = new Globe({ size: 1, land: '#', water: ' ' });
+var pre = document.getElementById('globe');
+var playing = true;
+var rotation = 0;
 
 function frame() {
   pre.textContent = globe.render(rotation);
@@ -92,7 +162,7 @@ function frame() {
   }
 }
 
-document.getElementById('toggle').addEventListener('click', () => {
+document.getElementById('toggle').addEventListener('click', function() {
   playing = !playing;
   if (playing) frame();
 });
