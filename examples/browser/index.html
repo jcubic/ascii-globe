@@ -11,6 +11,12 @@
     font-family: sans-serif;
     margin: 20px;
   }
+  #demo {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
+  }
   #globe {
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
@@ -41,10 +47,12 @@
 </head>
 <body>
 
-<pre id="globe"></pre>
-<div class="controls">
-  <button id="toggle">Pause</button>
-  <label>Rotation: <input id="rotation" type="number" min="0" max="360" step="0.1" value="0" disabled></label>
+<div id="demo">
+  <pre id="globe"></pre>
+  <div class="controls">
+    <button id="toggle">Pause</button>
+    <label>Rotation: <input id="rotation" type="number" min="0" max="360" step="0.1" value="0" disabled></label>
+  </div>
 </div>
 
 <script type="module">
