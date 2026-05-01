@@ -1,4 +1,4 @@
-# ![ASCII-Globe](https://github.com/jcubic/mutimon/blob/master/.github/logo.svg?raw=true)
+# ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
 [Isomorphic ASCII-Art globe renderer in JavaScript](https://github.com/jcubic/ascii-globe). Works in
 Node.js and the browser with zero dependencies.
