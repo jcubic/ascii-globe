@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.2.0-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.2.1-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 [![LICENSE MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jcubic/ascii-globe/blob/master/LICENSE)
 
