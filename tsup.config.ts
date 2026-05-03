@@ -4,7 +4,7 @@ import pkg from './package.json';
 const banner = `/**
  * ${pkg.name} v${pkg.version}
  * Copyright (c) ${new Date().getFullYear()} ${pkg.author}
- * Licensed under ${pkg.license}
+ * @license ${pkg.license}
  */`;
 
 export default defineConfig([
