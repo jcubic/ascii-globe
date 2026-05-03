@@ -10,6 +10,17 @@
     color: #fff;
     font-family: sans-serif;
     margin: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+  }
+  #container {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    align-items: center;
   }
   #globe {
     font-family: 'Courier New', Courier, monospace;
@@ -46,11 +57,13 @@
 </head>
 <body>
 
-<pre id="globe"></pre>
-<div class="controls">
-  <button id="toggle">Animate</button>
-  <label>H: <input id="inputH" type="number" min="-360" max="360" step="0.1" value="0"></label>
-  <label>V: <input id="inputV" type="number" min="-90" max="90" step="0.1" value="0"></label>
+<div id="container">
+  <pre id="globe"></pre>
+  <div class="controls">
+    <button id="toggle">Animate</button>
+    <label>H: <input id="inputH" type="number" min="-360" max="360" step="0.1" value="0"></label>
+    <label>V: <input id="inputV" type="number" min="-90" max="90" step="0.1" value="0"></label>
+  </div>
 </div>
 
 <script type="module">
