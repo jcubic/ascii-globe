@@ -109,14 +109,11 @@ function splitAnsi(s: string): { prefix: string; char: string; suffix: string } 
   return { prefix: '', char: s, suffix: '' };
 }
 
-const pinRaw = args.pin ? unescapeAnsi(args.pin) : '@';
-const pinParts = splitAnsi(pinRaw);
-
-const chars = [
-  args.background ?? ' ',
-  args.water ?? '-',
-  args.land ?? '#',
-  pinParts.char,
+const parts = [
+  splitAnsi(args.background ? unescapeAnsi(args.background) : ' '),
+  splitAnsi(args.water ? unescapeAnsi(args.water) : '-'),
+  splitAnsi(args.land ? unescapeAnsi(args.land) : '#'),
+  splitAnsi(args.pin ? unescapeAnsi(args.pin) : '@'),
 ];
 
 const globe = new Globe({
@@ -127,10 +124,10 @@ const globe = new Globe({
   pinSize: args['pin-size'] !== undefined ? parseFloat(args['pin-size']) : undefined,
   pins,
   format(type, length) {
-    const ch = chars[type] ?? chars[3];
-    const text = ch.repeat(length);
-    if (type >= 3) return pinParts.prefix + text + pinParts.suffix;
-    return text;
+    const p = parts[type] ?? parts[3];
+    const text = p.char.repeat(length);
+    if (!p.prefix && !p.suffix) return text;
+    return p.prefix + text + p.suffix;
   },
 });
 
