@@ -255,4 +255,4 @@ World map texture by Ebrahim; [CC BY-SA 4.0](https://creativecommons.org/license
 
 Copyright (c) 2025 [Jakub T. Jankiewicz](https://jakub.jankiewicz.org/)
 
-Released under the MIT License. See [LICENSE](LICENSE) for details.
+Released under the MIT License. See [LICENSE](https://github.com/jcubic/ascii-globe/blob/master/LICENSE) for details.
