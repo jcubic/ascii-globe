@@ -11,21 +11,20 @@
     font-family: sans-serif;
     margin: 20px;
   }
-  #demo {
-    display: flex;
-    flex-direction: column;
-    gap: 1em;
-    align-items: center;
-  }
   #globe {
     font-family: 'Courier New', Courier, monospace;
     font-weight: bold;
     font-size: 12px;
     line-height: 1.3;
     letter-spacing: 0.05em;
+    cursor: grab;
+    user-select: none;
+  }
+  #globe.dragging {
+    cursor: grabbing;
   }
   .controls {
-    margin: 10px 0;
+    margin-top: 10px;
     display: flex;
     align-items: center;
     gap: 12px;
@@ -47,12 +46,11 @@
 </head>
 <body>
 
-<div id="demo">
-  <pre id="globe"></pre>
-  <div class="controls">
-    <button id="toggle">Pause</button>
-    <label>Rotation: <input id="rotation" type="number" min="0" max="360" step="0.1" value="0" disabled></label>
-  </div>
+<pre id="globe"></pre>
+<div class="controls">
+  <button id="toggle">Animate</button>
+  <label>H: <input id="inputH" type="number" min="-360" max="360" step="0.1" value="0"></label>
+  <label>V: <input id="inputV" type="number" min="-90" max="90" step="0.1" value="0"></label>
 </div>
 
 <script type="module">
@@ -78,36 +76,102 @@ const globe = new Globe({
         return `<span style="color:${color}">${text}</span>`;
     }
 });
+
 const pre = document.getElementById('globe');
-const toggleBtn = document.getElementById('toggle');
-const rotInput = document.getElementById('rotation');
+const inputH = document.getElementById('inputH');
+const inputV = document.getElementById('inputV');
+const btn = document.getElementById('toggle');
 
-let playing = true;
-let rotation = 0;
-const SPEED = 0.3;
+let rotH = 0;
+let rotV = 0;
 
-function loop() {
-  pre.innerHTML = globe.render(rotation);
-  rotInput.value = rotation.toFixed(1);
-  if (playing) {
-    rotation = (rotation + SPEED) % 360;
-    requestAnimationFrame(loop);
-  }
+function syncInputs() {
+    inputH.value = rotH.toFixed(1);
+    inputV.value = rotV.toFixed(1);
 }
 
-toggleBtn.addEventListener('click', () => {
-  playing = !playing;
-  toggleBtn.textContent = playing ? 'Pause' : 'Play';
-  rotInput.disabled = playing;
-  if (playing) loop();
+function render() {
+    pre.innerHTML = globe.render([rotH, rotV]);
+    syncInputs();
+}
+
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+
+pre.addEventListener('mousedown', (e) => {
+    dragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    pre.classList.add('dragging');
 });
 
-rotInput.addEventListener('input', () => {
-  rotation = parseFloat(rotInput.value) || 0;
-  if (!playing) loop();
+window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX;
+    const dy = e.clientY - lastY;
+    rotH = (rotH + dx * 0.5) % 360;
+    rotV = Math.max(-90, Math.min(90, rotV + dy * 0.5));
+    lastX = e.clientX;
+    lastY = e.clientY;
+    render();
 });
 
-loop();
+window.addEventListener('mouseup', () => {
+    dragging = false;
+    pre.classList.remove('dragging');
+});
+
+pre.addEventListener('touchstart', (e) => {
+    const t = e.touches[0];
+    dragging = true;
+    lastX = t.clientX;
+    lastY = t.clientY;
+}, { passive: true });
+
+window.addEventListener('touchmove', (e) => {
+    if (!dragging) return;
+    const t = e.touches[0];
+    const dx = t.clientX - lastX;
+    const dy = t.clientY - lastY;
+    rotH = (rotH + dx * 0.5) % 360;
+    rotV = Math.max(-90, Math.min(90, rotV + dy * 0.5));
+    lastX = t.clientX;
+    lastY = t.clientY;
+    render();
+}, { passive: true });
+
+window.addEventListener('touchend', () => {
+    dragging = false;
+});
+
+let playing = false;
+
+function loop() {
+    if (!playing) return;
+    rotH = (rotH + 0.3) % 360;
+    render();
+    requestAnimationFrame(loop);
+}
+
+btn.addEventListener('click', () => {
+    playing = !playing;
+    btn.textContent = playing ? 'Pause' : 'Animate';
+    inputH.disabled = playing;
+    if (playing) loop();
+});
+
+inputH.addEventListener('change', () => {
+    rotH = parseFloat(inputH.value) || 0;
+    render();
+});
+
+inputV.addEventListener('change', () => {
+    rotV = Math.max(-90, Math.min(90, parseFloat(inputV.value) || 0));
+    render();
+});
+
+render();
 </script>
 </body>
 </html>
