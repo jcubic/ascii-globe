@@ -131,11 +131,14 @@ pre.innerHTML = globe.render(250);
 
 ### `globe.render(rotation)`
 
-Returns a string with the ASCII globe rendered at the given rotation angle.
+Returns a string with the ASCII globe rendered at the given rotation.
 
-- `rotation` — angle in degrees (0–360). Wraps around automatically, so any positive, negative, or fractional value is valid.
+- `rotation` — a single number (horizontal angle in degrees) or a `[horizontal, vertical]` pair. Values wrap around automatically.
 
-The returned string contains newline-separated rows forming the globe disk.
+```javascript
+globe.render(90);       // horizontal rotation only
+globe.render([90, 30]); // horizontal + vertical tilt
+```
 
 ## CLI
 
@@ -156,7 +159,7 @@ globe --animate
 Usage: globe <--rotation <degrees> | --animate> [options]
 
 Options:
-  --rotation <degrees>  Rotation angle in degrees
+  --rotation <degrees>  Rotation angle (single number or h,v pair)
   --animate             Animate the globe in the terminal
   --size <number>       Globe size multiplier (default: 1.4)
   --land <char>         Character for land (default: #)

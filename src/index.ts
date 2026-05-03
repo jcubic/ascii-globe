@@ -69,10 +69,15 @@ export default class Globe {
     this.prevLand = new Uint8Array(this.cols * this.rows);
   }
 
-  render(rotation: number): string {
-    const angle = ((rotation % 360) + 360) % 360 * DEG_TO_RAD;
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
+  render(rotation: number | [number, number]): string {
+    const rotH = Array.isArray(rotation) ? rotation[0] : rotation;
+    const rotV = Array.isArray(rotation) ? rotation[1] : 0;
+    const angleH = ((rotH % 360) + 360) % 360 * DEG_TO_RAD;
+    const angleV = ((-rotV % 360) + 360) % 360 * DEG_TO_RAD;
+    const cosA = Math.cos(angleH);
+    const sinA = Math.sin(angleH);
+    const cosB = Math.cos(angleV);
+    const sinB = Math.sin(angleV);
     const cx = this.cols * 0.5;
     const cy = this.rows * 0.5;
     const invR = 1 / this.radius;
@@ -101,9 +106,15 @@ export default class Globe {
 
         const sz = Math.sqrt(1 - r2);
 
-        const wx = sx * cosA - sz * sinA;
-        const wy = sy;
-        const wz = sx * sinA + sz * cosA;
+        // X-axis rotation (vertical tilt)
+        const rx = sx;
+        const ry = sy * cosB - sz * sinB;
+        const rz = sy * sinB + sz * cosB;
+
+        // Y-axis rotation (horizontal)
+        const wx = rx * cosA - rz * sinA;
+        const wy = ry;
+        const wz = rx * sinA + rz * cosA;
 
         const lon = Math.atan2(-wz, wx);
         const lat = Math.asin(wy < -1 ? -1 : wy > 1 ? 1 : wy);

@@ -5,7 +5,7 @@ const USAGE = `Usage: globe <--rotation <degrees> | --animate> [options]
 Render an ASCII globe to stdout.
 
 Options:
-  --rotation <degrees>  Rotation angle in degrees
+  --rotation <degrees>  Rotation angle (single number or h,v pair)
   --animate             Animate the globe in the terminal
   --size <number>       Globe size multiplier (default: 1.4)
   --land <char>         Character for land (default: #)
@@ -23,7 +23,9 @@ Either --rotation or --animate is required.
 
 Examples:
   globe --rotation 200
+  globe --rotation 200,30
   globe --animate
+  globe --animate --rotation 0,30
   globe --animate --size 1.5 --land '#' --water '-'
   globe --rotation 0 --background '.' --margin 3
   globe --rotation 20 --pins '52.23,21.01;40.71,-74.01'
@@ -131,9 +133,29 @@ const globe = new Globe({
   },
 });
 
+function parseRotation(s: string): number | [number, number] {
+  if (s.includes(',')) {
+    const [h, v] = s.split(',').map(Number);
+    if (isNaN(h) || isNaN(v)) {
+      process.stderr.write(`Error: invalid rotation value "${s}"\n`);
+      process.exit(1);
+    }
+    return [h, v];
+  }
+  const n = parseFloat(s);
+  if (isNaN(n)) {
+    process.stderr.write(`Error: invalid rotation value "${s}"\n`);
+    process.exit(1);
+  }
+  return n;
+}
+
 if (args.animate) {
-  let rotation = args.rotation !== undefined ? parseFloat(args.rotation) : 0;
-  const frameLines = globe.render(0).split('\n');
+  const parsed = args.rotation !== undefined ? parseRotation(args.rotation) : 0;
+  let rotH = Array.isArray(parsed) ? parsed[0] : parsed;
+  const rotV = Array.isArray(parsed) ? parsed[1] : 0;
+  const initial: number | [number, number] = rotV ? [rotH, rotV] : rotH;
+  const frameLines = globe.render(initial).split('\n');
   const termRows = process.stdout.rows || frameLines.length;
   const lines = Math.min(frameLines.length, termRows - 1);
   const offset = Math.max(0, Math.floor((frameLines.length - lines) / 2));
@@ -148,16 +170,13 @@ if (args.animate) {
       process.stdout.write(`\x1B[${lines}F`);
     }
     first = false;
-    const frame = globe.render(rotation).split('\n').slice(offset, offset + lines);
+    const rot: number | [number, number] = rotV ? [rotH, rotV] : rotH;
+    const frame = globe.render(rot).split('\n').slice(offset, offset + lines);
     const output = frame.map(line => '\x1B[2K' + line).join('\n');
     process.stdout.write(output + '\n');
-    rotation = (rotation + 0.7) % 360;
+    rotH = (rotH + 0.7) % 360;
   }, 1000 / 30);
 } else {
-  const rotation = parseFloat(args.rotation);
-  if (isNaN(rotation)) {
-    process.stderr.write(`Error: invalid rotation value "${args.rotation}"\n`);
-    process.exit(1);
-  }
+  const rotation = parseRotation(args.rotation);
   process.stdout.write(globe.render(rotation) + '\n');
 }
