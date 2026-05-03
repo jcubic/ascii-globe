@@ -1,4 +1,11 @@
 import { defineConfig } from 'tsup';
+import pkg from './package.json';
+
+const banner = `/**
+ * ${pkg.name} v${pkg.version}
+ * Copyright (c) ${new Date().getFullYear()} ${pkg.author}
+ * Licensed under ${pkg.license}
+ */`;
 
 export default defineConfig([
   {
@@ -8,6 +15,7 @@ export default defineConfig([
     clean: true,
     sourcemap: true,
     globalName: 'Globe',
+    banner: { js: banner },
     outExtension({ format }) {
       if (format === 'iife') return { js: '.global.js' };
       return {};
@@ -26,6 +34,6 @@ export default defineConfig([
     format: ['esm'],
     clean: false,
     sourcemap: false,
-    banner: { js: '#!/usr/bin/env node' },
+    banner: { js: `#!/usr/bin/env node\n${banner}` },
   },
 ]);
