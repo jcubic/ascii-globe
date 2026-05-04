@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.3.1-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.3.2-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 [![LICENSE MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jcubic/ascii-globe/blob/master/LICENSE)
 
@@ -141,6 +141,18 @@ import deathStar from 'ascii-globe/maps/death-star';
 
 const globe = new Globe({ map: deathStar, land: '#', water: ' ' });
 console.log(globe.render(0));
+```
+
+With a script tag (no modules), load the map as a separate script. The load order doesn't matter:
+
+```html
+<pre id="output"></pre>
+<script src="https://cdn.jsdelivr.net/npm/ascii-globe"></script>
+<script src="https://cdn.jsdelivr.net/npm/ascii-globe/dist/maps/death-star.global.js"></script>
+<script>
+var globe = new Globe({ map: Globe.maps['death-star'], land: '#', water: ' ' });
+document.getElementById('output').textContent = globe.render(0);
+</script>
 ```
 
 You can also generate your own map data from any equirectangular projection image

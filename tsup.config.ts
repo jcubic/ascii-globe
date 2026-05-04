@@ -37,7 +37,7 @@ export default defineConfig([
   },
   {
     entry: {
-      'maps/globe': 'src/maps/globe.ts',
+      'maps/earth': 'src/maps/earth.ts',
       'maps/death-star': 'src/maps/death-star.ts',
     },
     format: ['esm', 'cjs'],

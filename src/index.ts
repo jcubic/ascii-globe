@@ -1,5 +1,5 @@
 import { decodeTextureData } from './decode';
-import defaultMap from './maps/globe';
+import defaultMap from './maps/earth';
 
 export interface Pin {
   lat: number;
@@ -30,7 +30,7 @@ const HYST_LO = 80;
 
 export default class Globe {
   static maps: Record<string, string> = {
-    globe: defaultMap,
+    earth: defaultMap,
   };
 
   private cols: number;
