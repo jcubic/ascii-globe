@@ -53,6 +53,10 @@
     padding: 4px;
     font-size: 14px;
   }
+  select {
+    padding: 4px;
+    font-size: 14px;
+  }
 </style>
 </head>
 <body>
@@ -61,6 +65,10 @@
   <pre id="globe"></pre>
   <div class="controls">
     <button id="toggle">Animate</button>
+    <label>Map: <select id="mapSelect">
+      <option value="globe">Earth</option>
+      <option value="death-star">Death Star</option>
+    </select></label>
     <label>H: <input id="inputH" type="number" min="-360" max="360" step="0.1" value="0"></label>
     <label>V: <input id="inputV" type="number" min="-90" max="90" step="0.1" value="0"></label>
   </div>
@@ -68,32 +76,55 @@
 
 <script type="module">
 import Globe from '../../dist/index.js';
+import globeMap from '../../dist/maps/globe.js';
+import deathStarMap from '../../dist/maps/death-star.js';
 
-const chars = [' ', '◦', '#', '@'];
-const colors = ['', '#5599FF', '#0AB338', 'red'];
+const maps = { globe: globeMap, 'death-star': deathStarMap };
 
-const globe = new Globe({
-    size: 1.4,
-    pins: [
-        { lat: 52.23, long: 21.01 },   // Warsaw
-        { lat: 40.71, long: -74.01 },  // New York
-        { lat: 39.90, long: 116.40 },  // Beijing
-        { lat: -22.91, long: -43.17 }, // Rio de Janeiro
-        { lat: -26.20, long: 28.04 },  // Johannesburg
-        { lat: -37.81, long: 144.96 }, // Melbourne
-    ],
-    format(type, length) {
-        const text = (chars[type] ?? chars[3]).repeat(length);
-        const color = colors[type] ?? colors[3];
-        if (!color) return text;
-        return `<span style="color:${color}">${text}</span>`;
-    }
-});
+const earthPins = [
+    { lat: 52.23, long: 21.01 },   // Warsaw
+    { lat: 40.71, long: -74.01 },  // New York
+    { lat: 39.90, long: 116.40 },  // Beijing
+    { lat: -22.91, long: -43.17 }, // Rio de Janeiro
+    { lat: -26.20, long: 28.04 },  // Johannesburg
+    { lat: -37.81, long: 144.96 }, // Melbourne
+];
+
+const themes = {
+    globe: {
+        chars: [' ', '◦', '#', '@'],
+        colors: ['', '#5599FF', '#0AB338', 'red'],
+        pins: earthPins,
+    },
+    'death-star': {
+        chars: [' ', '◦', '#', '@'],
+        colors: ['', '', '#aaa', 'red'],
+        pins: [],
+    },
+};
+
+function createGlobe(mapName) {
+    const theme = themes[mapName];
+    return new Globe({
+        size: 1.4,
+        map: maps[mapName],
+        pins: theme.pins,
+        format(type, length) {
+            const text = (theme.chars[type] ?? theme.chars[3]).repeat(length);
+            const color = theme.colors[type] ?? theme.colors[3];
+            if (!color) return text;
+            return `<span style="color:${color}">${text}</span>`;
+        }
+    });
+}
+
+let globe = createGlobe('globe');
 
 const pre = document.getElementById('globe');
 const inputH = document.getElementById('inputH');
 const inputV = document.getElementById('inputV');
 const btn = document.getElementById('toggle');
+const mapSelect = document.getElementById('mapSelect');
 
 let rotH = 0;
 let rotV = 0;
@@ -172,6 +203,11 @@ btn.addEventListener('click', () => {
     btn.textContent = playing ? 'Pause' : 'Animate';
     inputH.disabled = playing;
     if (playing) loop();
+});
+
+mapSelect.addEventListener('change', () => {
+    globe = createGlobe(mapSelect.value);
+    render();
 });
 
 inputH.addEventListener('change', () => {
