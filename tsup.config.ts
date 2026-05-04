@@ -30,6 +30,17 @@ export default defineConfig([
     },
   },
   {
+    entry: {
+      'maps/globe': 'src/maps/globe.ts',
+      'maps/death-star': 'src/maps/death-star.ts',
+    },
+    format: ['esm', 'cjs'],
+    dts: true,
+    clean: false,
+    sourcemap: false,
+    banner: { js: banner },
+  },
+  {
     entry: ['src/cli.ts'],
     format: ['esm'],
     clean: false,

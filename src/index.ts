@@ -1,4 +1,5 @@
-import { getTextureData } from './data';
+import { decodeTextureData } from './decode';
+import defaultMap from './maps/globe';
 
 export interface Pin {
   lat: number;
@@ -9,6 +10,7 @@ export interface Pin {
 
 export interface GlobeOptions {
   size?: number;
+  map?: string;
   land?: string;
   water?: string;
   background?: string;
@@ -62,7 +64,7 @@ export default class Globe {
     this.rows = Math.round(60 * size);
     this.radius = 27 * size;
 
-    const tex = getTextureData();
+    const tex = decodeTextureData(options.map ?? defaultMap);
     this.texW = tex.width;
     this.texH = tex.height;
     this.texMask = tex.mask;
