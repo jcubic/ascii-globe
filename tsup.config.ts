@@ -22,7 +22,13 @@ export default defineConfig([
     },
     esbuildOptions(options, { format }) {
       if (format === 'iife') {
-        options.footer = { js: 'Globe = Globe.default;' };
+        options.banner = {
+          js: (options.banner?.js ? options.banner.js + '\n' : '') +
+            'var __globePreMaps = typeof Globe !== "undefined" && Globe && Globe.maps;',
+        };
+        options.footer = {
+          js: 'Globe = Globe.default;\nif (__globePreMaps) for (var __k in __globePreMaps) Globe.maps[__k] = __globePreMaps[__k];',
+        };
       }
       if (format === 'cjs') {
         options.footer = { js: 'module.exports = module.exports.default;' };
@@ -39,6 +45,16 @@ export default defineConfig([
     clean: false,
     sourcemap: false,
     banner: { js: banner },
+  },
+  {
+    entry: { 'maps/death-star.global': 'src/maps/death-star.global.ts' },
+    format: ['iife'],
+    clean: false,
+    sourcemap: false,
+    banner: { js: banner },
+    outExtension() {
+      return { js: '.js' };
+    },
   },
   {
     entry: ['src/cli.ts'],

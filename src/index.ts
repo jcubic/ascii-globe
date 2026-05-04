@@ -29,6 +29,10 @@ const HYST_HI = 176;
 const HYST_LO = 80;
 
 export default class Globe {
+  static maps: Record<string, string> = {
+    globe: defaultMap,
+  };
+
   private cols: number;
   private rows: number;
   private radius: number;
