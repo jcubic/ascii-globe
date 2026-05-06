@@ -1,6 +1,6 @@
 {
   "name": "ascii-globe",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Isomorphic ASCII globe renderer",
   "type": "module",
   "main": "./dist/index.cjs",
