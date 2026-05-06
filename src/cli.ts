@@ -20,6 +20,8 @@ Options:
   --pin <char>          Character for location pins (default: @)
   --pin-size <number>   Size of pin markers (default: 1)
   --pins <coords>       Pin locations as lat,long pairs separated by ;
+  --tilt <degrees>      Axial tilt in degrees (default: 0)
+  --speed <number>      Rotation speed in degrees per frame (default: 0.7)
   --help                Show this help message
 
 Either --rotation or --animate is required.
@@ -32,6 +34,8 @@ Examples:
   globe --animate --size 1.5 --land '#' --water '-'
   globe --rotation 0 --background '.' --margin 3
   globe --rotation 20 --pins '52.23,21.01;40.71,-74.01'
+  globe --animate --tilt 23.5
+  globe --animate --speed 1.4
 `;
 
 function parseArgs(argv: string[]) {
@@ -83,6 +87,18 @@ if (marginBlock !== undefined && isNaN(marginBlock)) {
 const marginInline = args['margin-inline'] !== undefined ? parseInt(args['margin-inline'], 10) : undefined;
 if (marginInline !== undefined && isNaN(marginInline)) {
   process.stderr.write(`Error: invalid margin-inline value "${args['margin-inline']}"\n`);
+  process.exit(1);
+}
+
+const tilt = args.tilt !== undefined ? parseFloat(args.tilt) : undefined;
+if (tilt !== undefined && isNaN(tilt)) {
+  process.stderr.write(`Error: invalid tilt value "${args.tilt}"\n`);
+  process.exit(1);
+}
+
+const speed = args.speed !== undefined ? parseFloat(args.speed) : undefined;
+if (speed !== undefined && isNaN(speed)) {
+  process.stderr.write(`Error: invalid speed value "${args.speed}"\n`);
   process.exit(1);
 }
 
@@ -139,6 +155,8 @@ const globe = new Globe({
   margin,
   marginBlock,
   marginInline,
+  tilt,
+  speed,
   pinSize: args['pin-size'] !== undefined ? parseFloat(args['pin-size']) : undefined,
   pins,
   format(type, length) {
@@ -190,7 +208,7 @@ if (args.animate) {
     const frame = globe.render(rot).split('\n').slice(offset, offset + lines);
     const output = frame.map(line => '\x1B[2K' + line).join('\n');
     process.stdout.write(output + '\n');
-    rotH = (rotH + 0.7) % 360;
+    rotH = (rotH + globe.speed) % 360;
   }, 1000 / 30);
 } else {
   const rotation = parseRotation(args.rotation);

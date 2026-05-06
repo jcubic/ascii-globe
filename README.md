@@ -90,6 +90,8 @@ Creates a new globe instance.
 | `pin`          | `string` | `'@'`   | Default character for location pins. Can include ANSI escape codes. |
 | `pinSize`      | `number` | `1`     | Default size multiplier for pin markers.            |
 | `pins`         | `Pin[]`  | `[]`    | Array of pin locations.                             |
+| `tilt`         | `number` | `0`     | Axial tilt in degrees (Earth's tilt is 23.5°).      |
+| `speed`        | `number` | `0.7`   | Rotation speed in degrees per frame.                |
 | `format`       | `function` | —     | Callback `(type, length) => string` for custom output (see below). |
 
 #### Pin object
@@ -201,6 +203,8 @@ Options:
   --pin <char>          Character for location pins (default: @)
   --pin-size <number>   Size of pin markers (default: 1)
   --pins <coords>       Pin locations as lat,long pairs separated by ;
+  --tilt <degrees>      Axial tilt in degrees (default: 0)
+  --speed <number>      Rotation speed in degrees per frame (default: 0.7)
   --help                Show this help message
 
 Either --rotation or --animate is required.
@@ -226,7 +230,7 @@ globe --rotation 40,20 --map ./my-map.js --land '#' --water ' '
 ```javascript
 import Globe from 'ascii-globe';
 
-const globe = new Globe({ size: 1, land: '#', water: ' ' });
+const globe = new Globe({ size: 1, land: '#', water: ' ', tilt: 23.5 });
 
 let rotation = 0;
 
@@ -235,7 +239,7 @@ process.stdout.write('\x1B[?25l'); // hide cursor
 setInterval(() => {
   process.stdout.write('\x1B[2J\x1B[H'); // clear + home
   process.stdout.write(globe.render(rotation));
-  rotation = (rotation + 0.7) % 360;
+  rotation = (rotation + globe.speed) % 360;
 }, 1000 / 30);
 ```
 

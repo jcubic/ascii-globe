@@ -20,6 +20,8 @@ export interface GlobeOptions {
   pin?: string;
   pinSize?: number;
   pins?: Pin[];
+  tilt?: number;
+  speed?: number;
   format?: (type: number, length: number) => string;
 }
 
@@ -46,6 +48,10 @@ export default class Globe {
   private pinSize: number;
   private pins: Pin[];
   private formatFn?: (type: number, length: number) => string;
+  private cosC: number;
+  private sinC: number;
+  tilt: number;
+  speed: number;
   private texW: number;
   private texH: number;
   private texMask: Uint8Array;
@@ -63,6 +69,11 @@ export default class Globe {
     this.pinSize = options.pinSize ?? 1;
     this.pins = options.pins ?? [];
     this.formatFn = options.format;
+    this.tilt = options.tilt ?? 0;
+    this.speed = options.speed ?? 0.7;
+    const angleT = this.tilt * DEG_TO_RAD;
+    this.cosC = Math.cos(angleT);
+    this.sinC = Math.sin(angleT);
 
     this.cols = Math.round(120 * size);
     this.rows = Math.round(60 * size);
@@ -87,7 +98,7 @@ export default class Globe {
     const cx = this.cols * 0.5;
     const cy = this.rows * 0.5;
     const invR = 1 / this.radius;
-    const { cols, rows, texW, texH, texMask, prevLand, land, water, background, aspect, pins, pinChar, pinSize, formatFn } = this;
+    const { cols, rows, texW, texH, texMask, prevLand, land, water, background, aspect, pins, pinChar, pinSize, formatFn, cosC, sinC } = this;
     const baseThreshold = 1.5 / this.radius;
     const pinsRad = pins.map(p => ({
       lat: p.lat * DEG_TO_RAD,
@@ -112,15 +123,20 @@ export default class Globe {
 
         const sz = Math.sqrt(1 - r2);
 
-        // X-axis rotation (vertical tilt)
+        // X-axis rotation (vertical)
         const rx = sx;
         const ry = sy * cosB - sz * sinB;
         const rz = sy * sinB + sz * cosB;
 
+        // Z-axis rotation (axial tilt)
+        const tx = rx * cosC - ry * sinC;
+        const ty = rx * sinC + ry * cosC;
+        const tz = rz;
+
         // Y-axis rotation (horizontal)
-        const wx = rx * cosA - rz * sinA;
-        const wy = ry;
-        const wz = rx * sinA + rz * cosA;
+        const wx = tx * cosA - tz * sinA;
+        const wy = ty;
+        const wz = tx * sinA + tz * cosA;
 
         const lon = Math.atan2(-wz, wx);
         const lat = Math.asin(wy < -1 ? -1 : wy > 1 ? 1 : wy);
