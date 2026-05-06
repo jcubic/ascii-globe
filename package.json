@@ -21,7 +21,7 @@
     }
   },
   "bin": {
-    "globe": "./dist/cli.js"
+    "globe": "dist/cli.js"
   },
   "files": [
     "dist"
