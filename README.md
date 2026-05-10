@@ -1,7 +1,9 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.4.0-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.4.1-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
+![NPM Downloads](https://img.shields.io/npm/dm/ascii-globe)
+![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/ascii-globe)
 [![LICENSE MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/jcubic/ascii-globe/blob/master/LICENSE)
 
 Zero dependencies isomorphic ASCII-Art globe renderer in JavaScript.

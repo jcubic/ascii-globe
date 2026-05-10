@@ -1,6 +1,6 @@
 {
   "name": "ascii-globe",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Isomorphic ASCII globe renderer",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -41,6 +41,14 @@
     "earth",
     "ascii-art"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcubic/ascii-globe.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jcubic/ascii-globe/issues"
+  },
+  "homepage": "https://github.com/jcubic/ascii-globe#readme",
   "author": "Jakub T. Jankiewicz <jcubic@onet.pl> (https://jakub.jankiewicz.org/)",
   "license": "MIT",
   "devDependencies": {
