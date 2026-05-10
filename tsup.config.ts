@@ -62,5 +62,6 @@ export default defineConfig([
     clean: false,
     sourcemap: false,
     banner: { js: `#!/usr/bin/env node\n${banner}` },
+    define: { __VERSION__: JSON.stringify(pkg.version) },
   },
 ]);

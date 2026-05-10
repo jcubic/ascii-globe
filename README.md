@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.4.1-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.4.2-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 ![NPM Downloads](https://img.shields.io/npm/dm/ascii-globe)
 ![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/ascii-globe)
@@ -189,6 +189,8 @@ globe --animate
 ```
 
 ```
+ASCII Globe v0.4.2 - Isomorphic ASCII globe renderer
+
 Usage: globe <--rotation <degrees> | --animate> [options]
 
 Options:
@@ -208,6 +210,7 @@ Options:
   --tilt <degrees>      Axial tilt in degrees (default: 0)
   --speed <number>      Rotation speed in degrees per frame (default: 0.7)
   --help                Show this help message
+  -v, --version         Show version number
 
 Either --rotation or --animate is required.
 ```

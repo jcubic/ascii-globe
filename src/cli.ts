@@ -2,9 +2,12 @@ import { readFileSync } from 'fs';
 import { resolve } from 'path';
 import Globe from './index';
 
-const USAGE = `Usage: globe <--rotation <degrees> | --animate> [options]
+declare const __VERSION__: string;
+const VERSION = typeof __VERSION__ !== 'undefined' ? __VERSION__ : 'dev';
 
-Render an ASCII globe to stdout.
+const USAGE = `ASCII Globe v${VERSION} - Isomorphic ASCII globe renderer
+
+Usage: globe <--rotation <degrees> | --animate> [options]
 
 Options:
   --rotation <degrees>  Rotation angle (single number or h,v pair)
@@ -23,6 +26,7 @@ Options:
   --tilt <degrees>      Axial tilt in degrees (default: 0)
   --speed <number>      Rotation speed in degrees per frame (default: 0.7)
   --help                Show this help message
+  -v, --version         Show version number
 
 Either --rotation or --animate is required.
 
@@ -44,6 +48,8 @@ function parseArgs(argv: string[]) {
     const key = argv[i];
     if (key === '--help' || key === '-h') {
       args.help = 'true';
+    } else if (key === '--version' || key === '-v') {
+      args.version = 'true';
     } else if (key === '--animate') {
       args.animate = 'true';
     } else if (key.startsWith('--') && i + 1 < argv.length) {
@@ -54,6 +60,11 @@ function parseArgs(argv: string[]) {
 }
 
 const args = parseArgs(process.argv.slice(2));
+
+if (args.version) {
+  process.stdout.write(VERSION + '\n');
+  process.exit(0);
+}
 
 if (args.help || process.argv.length <= 2) {
   process.stdout.write(USAGE);
