@@ -4,16 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ASCII Globe Explorer</title>
+
 <style>
   :root {
     --accent: #38bdf8;
     --bg: #020617;
-    --panel: rgba(15, 23, 42, 0.8);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --panel: rgba(15, 23, 42, 0.82);
+    --glass-border: rgba(255,255,255,0.08);
+    --text: #f8fafc;
+    --muted: #94a3b8;
+  }
+
+  * {
+    box-sizing: border-box;
   }
 
   body {
+    margin: 0;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 24px 16px;
+
     background-color: var(--bg);
+
     /* Static Star Field using radial gradients */
     background-image:
       radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
@@ -21,50 +38,85 @@
       radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
       radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
       radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0));
+
     background-size: 200px 200px;
-    color: #f8fafc;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    overflow: hidden;
+
+    color: var(--text);
+
+    font-family:
+      'Segoe UI',
+      Tahoma,
+      Geneva,
+      Verdana,
+      sans-serif;
+
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   #container {
+    width: min(1180px, 100%);
+
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.5rem;
-    z-index: 10;
+
+    gap: 24px;
   }
 
   h1 {
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.4em;
-    color: var(--accent);
     margin: 0;
-    opacity: 0.8;
+
+    font-size: 0.95rem;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+
+    color: var(--accent);
+
+    opacity: 0.85;
+
+    text-align: center;
   }
 
   #globe-wrapper {
-    position: relative;
-    padding: 20px;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+
+    padding: 18px;
   }
 
   #globe {
-    font-family: 'Fira Code', 'Courier New', monospace;
+    max-width: 100%;
+
+    overflow: auto;
+
+    font-family:
+      'Fira Code',
+      'Courier New',
+      monospace;
+
     font-weight: 900;
+
     font-size: clamp(9px, 1.2vw, 12px);
+
     line-height: 1.1;
+
     letter-spacing: 0.08em;
+
     cursor: grab;
+
     user-select: none;
-    transition: text-shadow 0.3s ease;
-    filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.2));
+
+    transition:
+      filter 0.3s ease,
+      text-shadow 0.3s ease;
+
+    filter:
+      drop-shadow(
+        0 0 15px rgba(56, 189, 248, 0.2)
+      );
   }
 
   #globe.dragging {
@@ -72,76 +124,177 @@
   }
 
   .controls {
-    background: var(--panel);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    padding: 1.2rem 2rem;
-    border-radius: 20px;
+    width: 100%;
+
     display: flex;
-    gap: 25px;
     align-items: center;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    flex-wrap: wrap;
+
+    gap: 18px;
+
+    padding: 18px;
+
+    border-radius: 20px;
+
+    background: var(--panel);
+
+    border: 1px solid var(--glass-border);
+
+    backdrop-filter: blur(10px);
+
+    box-shadow:
+      0 25px 50px -12px rgba(0,0,0,0.5);
   }
 
   .control-item {
     display: flex;
     flex-direction: column;
+
     gap: 8px;
+
+    min-width: 140px;
   }
 
   label {
-    font-size: 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    font-size: 0.7rem;
     font-weight: 800;
-    color: #64748b;
+
+    color: var(--muted);
+
     text-transform: uppercase;
+  }
+
+  .value {
+    color: var(--text);
   }
 
   input[type="range"] {
     appearance: none;
-    background: #1e293b;
+
+    width: 140px;
+    max-width: 100%;
+
     height: 4px;
-    border-radius: 2px;
-    width: 100px;
+
+    border-radius: 999px;
+
+    background: #1e293b;
   }
 
   input[type="range"]::-webkit-slider-thumb {
     appearance: none;
+
     width: 12px;
     height: 12px;
-    background: var(--accent);
+
     border-radius: 50%;
+
+    background: var(--accent);
+
     cursor: pointer;
-    box-shadow: 0 0 10px var(--accent);
+
+    box-shadow:
+      0 0 10px var(--accent);
+  }
+
+  input[type="range"]::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--accent);
+
+    cursor: pointer;
+
+    box-shadow:
+      0 0 10px var(--accent);
   }
 
   button {
-    background: var(--accent);
-    color: #020617;
     border: none;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-weight: bold;
+
+    padding: 10px 18px;
+
+    border-radius: 10px;
+
+    background: var(--accent);
+
+    color: #020617;
+
+    font-weight: 700;
+
     cursor: pointer;
-    transition: transform 0.2s;
+
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+
+    box-shadow:
+      0 8px 20px rgba(56,189,248,0.28);
   }
 
   button:hover {
-    transform: scale(1.05);
+    transform: translateY(-1px);
+
+    box-shadow:
+      0 12px 24px rgba(56,189,248,0.36);
   }
 
   select {
-    background: #0f172a;
-    color: white;
+    min-width: 180px;
+
+    padding: 8px 10px;
+
+    border-radius: 8px;
+
     border: 1px solid var(--glass-border);
-    padding: 5px;
-    border-radius: 4px;
-    font-size: 0.8rem;
+
+    background: #0f172a;
+
+    color: white;
+
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 720px) {
+    body {
+      padding: 16px 12px;
+    }
+
+    .controls {
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .control-item {
+      width: 100%;
+      min-width: 0;
+    }
+
+    input[type="range"] {
+      width: 100%;
+    }
+
+    select,
+    button {
+      width: 100%;
+    }
   }
 </style>
 </head>
+
 <body>
 
 <div id="container">
+
   <h1>Planetary Observer</h1>
 
   <div id="globe-wrapper">
@@ -149,10 +302,16 @@
   </div>
 
   <div class="controls">
-    <button id="toggle">Animate</button>
+
+    <button id="toggle">
+      Animate
+    </button>
 
     <div class="control-item">
-      <label>Target</label>
+      <label for="mapSelect">
+        Target
+      </label>
+
       <select id="mapSelect">
         <option value="earth">Earth</option>
         <option value="moon">The Moon</option>
@@ -162,19 +321,50 @@
     </div>
 
     <div class="control-item">
-      <label>Long: <span id="valH">0</span>°</label>
-      <input id="inputH" type="range" min="-180" max="180" value="0">
+      <label for="inputH">
+        Long:
+        <span id="valH" class="value">0</span>°
+      </label>
+
+      <input
+        id="inputH"
+        type="range"
+        min="-180"
+        max="180"
+        value="0"
+      >
     </div>
 
     <div class="control-item">
-      <label>Lat: <span id="valV">0</span>°</label>
-      <input id="inputV" type="range" min="-90" max="90" value="0">
+      <label for="inputV">
+        Lat:
+        <span id="valV" class="value">0</span>°
+      </label>
+
+      <input
+        id="inputV"
+        type="range"
+        min="-90"
+        max="90"
+        value="0"
+      >
     </div>
 
     <div class="control-item">
-      <label>Tilt: <span id="valTilt">0</span>°</label>
-      <input id="inputTilt" type="range" min="-45" max="45" value="0">
+      <label for="inputTilt">
+        Tilt:
+        <span id="valTilt" class="value">0</span>°
+      </label>
+
+      <input
+        id="inputTilt"
+        type="range"
+        min="-45"
+        max="45"
+        value="0"
+      >
     </div>
+
   </div>
 </div>
 
@@ -185,37 +375,40 @@ import deathStarMap from '../../dist/maps/death-star.js';
 Globe.maps['death-star'] = deathStarMap;
 
 const earthPins = [
-    { lat: 52.23, long: 21.01 },
-    { lat: 40.71, long: -74.01 },
-    { lat: 39.90, long: 116.40 },
-    { lat: -22.91, long: -43.17 }
+  { lat: 52.23, long: 21.01 },
+  { lat: 40.71, long: -74.01 },
+  { lat: 39.90, long: 116.40 },
+  { lat: -22.91, long: -43.17 }
 ];
 
 const themes = {
-    earth: {
-        chars: [' ', '·', '■', '●'],
-        colors: ['', '#3b82f6', '#22c55e', '#ef4444'],
-        pins: earthPins,
-        glow: 'rgba(59, 130, 246, 0.4)'
-    },
-    moon: {
-        chars: [' ', '·', '◦', '0'],
-        colors: ['', '#1e293b', '#94a3b8', '#f8fafc'],
-        pins: [],
-        glow: 'rgba(255, 255, 255, 0.1)'
-    },
-    mars: {
-        chars: [' ', '·', '▒', '█'],
-        colors: ['', '#450a0a', '#991b1b', '#f87171'],
-        pins: [],
-        glow: 'rgba(248, 113, 113, 0.2)'
-    },
-    'death-star': {
-        chars: [' ', '·', '#', '@'],
-        colors: ['', '#000', '#475569', '#22c55e'],
-        pins: [],
-        glow: 'rgba(34, 197, 94, 0.2)'
-    }
+  earth: {
+    chars: [' ', '·', '■', '●'],
+    colors: ['', '#3b82f6', '#22c55e', '#ef4444'],
+    pins: earthPins,
+    glow: 'rgba(59, 130, 246, 0.4)'
+  },
+
+  moon: {
+    chars: [' ', '·', '◦', '0'],
+    colors: ['', '#1e293b', '#94a3b8', '#f8fafc'],
+    pins: [],
+    glow: 'rgba(255,255,255,0.1)'
+  },
+
+  mars: {
+    chars: [' ', '·', '▒', '█'],
+    colors: ['', '#450a0a', '#991b1b', '#f87171'],
+    pins: [],
+    glow: 'rgba(248,113,113,0.2)'
+  },
+
+  'death-star': {
+    chars: [' ', '·', '#', '@'],
+    colors: ['', '#000', '#475569', '#22c55e'],
+    pins: [],
+    glow: 'rgba(34,197,94,0.2)'
+  }
 };
 
 let tilt = 0;
@@ -224,133 +417,273 @@ let rotV = 0;
 let playing = false;
 
 const pre = document.getElementById('globe');
-const mapSelect = document.getElementById('mapSelect');
-const btn = document.getElementById('toggle');
-const inputH = document.getElementById('inputH');
-const inputV = document.getElementById('inputV');
-const inputTilt = document.getElementById('inputTilt');
-const valH = document.getElementById('valH');
-const valV = document.getElementById('valV');
-const valTilt = document.getElementById('valTilt');
+
+const mapSelect =
+  document.getElementById('mapSelect');
+
+const btn =
+  document.getElementById('toggle');
+
+const inputH =
+  document.getElementById('inputH');
+
+const inputV =
+  document.getElementById('inputV');
+
+const inputTilt =
+  document.getElementById('inputTilt');
+
+const valH =
+  document.getElementById('valH');
+
+const valV =
+  document.getElementById('valV');
+
+const valTilt =
+  document.getElementById('valTilt');
+
+function normalizeLongitude(value) {
+  return (
+    ((value + 180) % 360 + 360) % 360
+  ) - 180;
+}
 
 function createGlobe(mapName) {
-    const theme = themes[mapName] || themes.earth;
-    pre.style.filter = `drop-shadow(0 0 15px ${theme.glow})`;
 
-    return new Globe({
-        size: 1.4,
-        map: Globe.maps[mapName] || Globe.maps['earth'],
-        tilt,
-        pins: theme.pins,
-        format(type, length) {
-            const text = (theme.chars[type] ?? theme.chars[3]).repeat(length);
-            const color = theme.colors[type] ?? theme.colors[3];
-            return color ? `<span style="color:${color}">${text}</span>` : text;
-        }
-    });
+  const theme =
+    themes[mapName] || themes.earth;
+
+  pre.style.filter =
+    `drop-shadow(0 0 15px ${theme.glow})`;
+
+  return new Globe({
+    size: 1.4,
+
+    map:
+      Globe.maps[mapName]
+      || Globe.maps['earth'],
+
+    tilt,
+
+    pins: theme.pins,
+
+    format(type, length) {
+
+      const text =
+        (
+          theme.chars[type]
+          ?? theme.chars[3]
+        ).repeat(length);
+
+      const color =
+        theme.colors[type]
+        ?? theme.colors[3];
+
+      return color
+        ? `<span style="color:${color}">${text}</span>`
+        : text;
+    }
+  });
 }
 
 let globe = createGlobe('earth');
 
 function render() {
-    pre.innerHTML = globe.render([rotH, rotV]);
 
-    valH.textContent = Math.round(rotH);
-    valV.textContent = Math.round(rotV);
-    valTilt.textContent = Math.round(tilt);
+  pre.innerHTML =
+    globe.render([rotH, rotV]);
 
-    inputH.value = rotH;
-    inputV.value = rotV;
-    inputTilt.value = tilt;
+  valH.textContent =
+    Math.round(rotH);
+
+  valV.textContent =
+    Math.round(rotV);
+
+  valTilt.textContent =
+    Math.round(tilt);
+
+  inputH.value =
+    normalizeLongitude(rotH);
+
+  inputV.value = rotV;
+
+  inputTilt.value = tilt;
 }
 
-mapSelect.addEventListener('change', () => {
+mapSelect.addEventListener(
+  'change',
+  () => {
     globe = createGlobe(mapSelect.value);
     render();
-});
+  }
+);
 
-btn.addEventListener('click', () => {
+btn.addEventListener(
+  'click',
+  () => {
+
     playing = !playing;
-    btn.textContent = playing ? 'Stop' : 'Animate';
-    if (playing) loop();
-});
+
+    btn.textContent =
+      playing ? 'Stop' : 'Animate';
+
+    if (playing) {
+      loop();
+    }
+  }
+);
 
 function loop() {
-    if (!playing) return;
-    rotH = (rotH + 0.5) % 360;
-    render();
-    requestAnimationFrame(loop);
+
+  if (!playing) return;
+
+  rotH = (rotH + 0.5) % 360;
+
+  render();
+
+  requestAnimationFrame(loop);
 }
 
-const sliders = ['H', 'V', 'Tilt'];
-sliders.forEach(s => {
-    const el = document.getElementById(`input${s}`);
-    el.addEventListener('input', () => {
-        if (s === 'H') rotH = parseFloat(el.value);
-        if (s === 'V') rotV = parseFloat(el.value);
-        if (s === 'Tilt') {
-            tilt = parseFloat(el.value);
-            globe = createGlobe(mapSelect.value);
-        }
-        render();
-    });
+['H', 'V', 'Tilt'].forEach(type => {
+
+  const input =
+    document.getElementById(
+      `input${type}`
+    );
+
+  input.addEventListener(
+    'input',
+    () => {
+
+      if (type === 'H') {
+        rotH = parseFloat(input.value);
+      }
+
+      if (type === 'V') {
+        rotV = parseFloat(input.value);
+      }
+
+      if (type === 'Tilt') {
+        tilt = parseFloat(input.value);
+
+        globe =
+          createGlobe(mapSelect.value);
+      }
+
+      render();
+    }
+  );
 });
 
 let dragging = false;
+
 let lastX = 0;
 let lastY = 0;
 
 function startDrag(x, y) {
-    dragging = true;
-    lastX = x;
-    lastY = y;
-    pre.classList.add('dragging');
+
+  dragging = true;
+
+  lastX = x;
+  lastY = y;
+
+  pre.classList.add('dragging');
 }
 
 function moveDrag(x, y) {
-    if (!dragging) return;
 
-    rotH += (x - lastX) * 0.5;
-    rotV = Math.max(-90, Math.min(90, rotV + (y - lastY) * 0.5));
+  if (!dragging) return;
 
-    lastX = x;
-    lastY = y;
-    render();
+  rotH += (x - lastX) * 0.5;
+
+  rotV = Math.max(
+    -90,
+    Math.min(
+      90,
+      rotV + (y - lastY) * 0.5
+    )
+  );
+
+  lastX = x;
+  lastY = y;
+
+  render();
 }
 
 function endDrag() {
-    dragging = false;
-    pre.classList.remove('dragging');
+
+  dragging = false;
+
+  pre.classList.remove('dragging');
 }
 
-pre.addEventListener('mousedown', e => {
+pre.addEventListener(
+  'mousedown',
+  e => {
     startDrag(e.clientX, e.clientY);
-});
+  }
+);
 
-window.addEventListener('mousemove', e => {
+window.addEventListener(
+  'mousemove',
+  e => {
     moveDrag(e.clientX, e.clientY);
-});
+  }
+);
 
-window.addEventListener('mouseup', endDrag);
+window.addEventListener(
+  'mouseup',
+  endDrag
+);
 
-pre.addEventListener('touchstart', e => {
+pre.addEventListener(
+  'touchstart',
+  e => {
+
     const touch = e.touches[0];
-    if (!touch) return;
-    startDrag(touch.clientX, touch.clientY);
-}, { passive: true });
 
-window.addEventListener('touchmove', e => {
+    if (!touch) return;
+
+    startDrag(
+      touch.clientX,
+      touch.clientY
+    );
+  },
+  { passive: true }
+);
+
+window.addEventListener(
+  'touchmove',
+  e => {
+
     if (!dragging) return;
-    const touch = e.touches[0];
-    if (!touch) return;
-    e.preventDefault();
-    moveDrag(touch.clientX, touch.clientY);
-}, { passive: false });
 
-window.addEventListener('touchend', endDrag);
-window.addEventListener('touchcancel', endDrag);
+    const touch = e.touches[0];
+
+    if (!touch) return;
+
+    e.preventDefault();
+
+    moveDrag(
+      touch.clientX,
+      touch.clientY
+    );
+  },
+  { passive: false }
+);
+
+window.addEventListener(
+  'touchend',
+  endDrag
+);
+
+window.addEventListener(
+  'touchcancel',
+  endDrag
+);
 
 render();
 </script>
+
 </body>
 </html>
