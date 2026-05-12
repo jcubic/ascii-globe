@@ -3,75 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ASCII Globe</title>
+<title>ASCII Globe Explorer</title>
 <style>
+  :root {
+    --accent: #38bdf8;
+    --bg: #020617;
+    --panel: rgba(15, 23, 42, 0.8);
+    --glass-border: rgba(255, 255, 255, 0.1);
+  }
+
   body {
-    background: #383838;
-    color: #fff;
-    font-family: sans-serif;
-    margin: 20px;
+    background-color: var(--bg);
+    /* Animated Star Field using radial gradients */
+    background-image: 
+      radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+      radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+      radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+      radial-gradient(1px 1px at 90px 40px, #fff, rgba(0,0,0,0)),
+      radial-gradient(1px 1px at 130px 80px, #fff, rgba(0,0,0,0));
+    background-size: 200px 200px;
+    color: #f8fafc;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    margin: 0;
+    overflow: hidden;
   }
+
   #container {
     display: flex;
     flex-direction: column;
-    gap: 1em;
     align-items: center;
+    gap: 1.5rem;
+    z-index: 10;
   }
+
+  /* Title Aesthetic */
+  h1 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--accent);
+    margin: 0;
+    opacity: 0.8;
+  }
+
+  /* The Globe Container */
+  #globe-wrapper {
+    position: relative;
+    padding: 20px;
+  }
+
   #globe {
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    font-size: 12px;
-    line-height: 1.3;
-    letter-spacing: 0.05em;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-weight: 900;
+    font-size: clamp(9px, 1.2vw, 12px);
+    line-height: 1.1;
+    letter-spacing: 0.08em;
     cursor: grab;
     user-select: none;
+    transition: text-shadow 0.3s ease;
+    /* Atmospheric glow */
+    filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.2));
   }
-  #globe.dragging {
-    cursor: grabbing;
-  }
+
+  #globe.dragging { cursor: grabbing; }
+
+  /* Glassmorphism Control Panel */
   .controls {
-    margin-top: 10px;
+    background: var(--panel);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    padding: 1.2rem 2rem;
+    border-radius: 20px;
     display: flex;
+    gap: 25px;
     align-items: center;
-    gap: 12px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   }
-  button {
-    padding: 6px 16px;
-    font-size: 14px;
-    cursor: pointer;
+
+  .control-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
+
   label {
-    font-size: 14px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
   }
-  input[type="number"] {
-    width: 80px;
-    padding: 4px;
-    font-size: 14px;
+
+  /* Modern range inputs */
+  input[type="range"] {
+    appearance: none;
+    background: #1e293b;
+    height: 4px;
+    border-radius: 2px;
+    width: 100px;
   }
+
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  button {
+    background: var(--accent);
+    color: #020617;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+
+  button:hover { transform: scale(1.05); }
+
   select {
-    padding: 4px;
-    font-size: 14px;
+    background: #0f172a;
+    color: white;
+    border: 1px solid var(--glass-border);
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 0.8rem;
   }
 </style>
 </head>
 <body>
 
 <div id="container">
-  <pre id="globe"></pre>
+  <h1>Planetary Observer</h1>
+  
+  <div id="globe-wrapper">
+    <pre id="globe"></pre>
+  </div>
+
   <div class="controls">
     <button id="toggle">Animate</button>
-    <label>Map: <select id="mapSelect">
-      <option value="earth">Earth</option>
-      <option value="death-star">Death Star</option>
-    </select></label>
-    <label>H: <input id="inputH" type="number" min="-360" max="360" step="0.1" value="0"></label>
-    <label>V: <input id="inputV" type="number" min="-90" max="90" step="0.1" value="0"></label>
-    <label>Tilt: <input id="inputTilt" type="number" min="-90" max="90" step="0.5" value="0"></label>
+
+    <div class="control-item">
+      <label>Target</label>
+      <select id="mapSelect">
+        <option value="earth">Earth</option>
+        <option value="moon">The Moon</option>
+        <option value="mars">Mars</option>
+        <option value="death-star">DS-1 Platform</option>
+      </select>
+    </div>
+
+    <div class="control-item">
+      <label>Long: <span id="valH">0</span>°</label>
+      <input id="inputH" type="range" min="-180" max="180" value="0">
+    </div>
+
+    <div class="control-item">
+      <label>Lat: <span id="valV">0</span>°</label>
+      <input id="inputV" type="range" min="-90" max="90" value="0">
+    </div>
+
+    <div class="control-item">
+      <label>Tilt: <span id="valTilt">0</span>°</label>
+      <input id="inputTilt" type="range" min="-45" max="45" value="0">
+    </div>
   </div>
 </div>
 
@@ -82,152 +186,127 @@ import deathStarMap from '../../dist/maps/death-star.js';
 Globe.maps['death-star'] = deathStarMap;
 
 const earthPins = [
-    { lat: 52.23, long: 21.01 },   // Warsaw
-    { lat: 40.71, long: -74.01 },  // New York
-    { lat: 39.90, long: 116.40 },  // Beijing
-    { lat: -22.91, long: -43.17 }, // Rio de Janeiro
-    { lat: -26.20, long: 28.04 },  // Johannesburg
-    { lat: -37.81, long: 144.96 }, // Melbourne
+    { lat: 52.23, long: 21.01 }, { lat: 40.71, long: -74.01 },
+    { lat: 39.90, long: 116.40 }, { lat: -22.91, long: -43.17 }
 ];
 
 const themes = {
     earth: {
-        chars: [' ', '◦', '#', '@'],
-        colors: ['', '#5599FF', '#0AB338', 'red'],
+        chars: [' ', '·', '■', '●'],
+        colors: ['', '#3b82f6', '#22c55e', '#ef4444'],
         pins: earthPins,
+        glow: 'rgba(59, 130, 246, 0.4)'
+    },
+    moon: {
+        chars: [' ', '·', '◦', '0'],
+        colors: ['', '#1e293b', '#94a3b8', '#f8fafc'],
+        pins: [],
+        glow: 'rgba(255, 255, 255, 0.1)'
+    },
+    mars: {
+        chars: [' ', '·', '▒', '█'],
+        colors: ['', '#450a0a', '#991b1b', '#f87171'],
+        pins: [],
+        glow: 'rgba(248, 113, 113, 0.2)'
     },
     'death-star': {
-        chars: [' ', '◦', '#', '@'],
-        colors: ['', '', '#aaa', 'red'],
+        chars: [' ', '·', '#', '@'],
+        colors: ['', '#000', '#475569', '#22c55e'],
         pins: [],
-    },
+        glow: 'rgba(34, 197, 94, 0.2)'
+    }
 };
 
 let tilt = 0;
+let rotH = 0;
+let rotV = 0;
+let playing = false;
+
+const pre = document.getElementById('globe');
+const mapSelect = document.getElementById('mapSelect');
+const btn = document.getElementById('toggle');
 
 function createGlobe(mapName) {
     const theme = themes[mapName];
+    // Apply theme glow to the pre tag
+    pre.style.filter = `drop-shadow(0 0 15px ${theme.glow})`;
+    
     return new Globe({
         size: 1.4,
-        map: Globe.maps[mapName],
+        map: Globe.maps[mapName === 'earth' ? 'earth' : (mapName === 'death-star' ? 'death-star' : 'earth')], 
         tilt,
         pins: theme.pins,
         format(type, length) {
             const text = (theme.chars[type] ?? theme.chars[3]).repeat(length);
             const color = theme.colors[type] ?? theme.colors[3];
-            if (!color) return text;
-            return `<span style="color:${color}">${text}</span>`;
+            return color ? `<span style="color:${color}">${text}</span>` : text;
         }
     });
 }
 
 let globe = createGlobe('earth');
 
-const pre = document.getElementById('globe');
-const inputH = document.getElementById('inputH');
-const inputV = document.getElementById('inputV');
-const inputTilt = document.getElementById('inputTilt');
-const btn = document.getElementById('toggle');
-const mapSelect = document.getElementById('mapSelect');
-
-let rotH = 0;
-let rotV = 0;
-
-function syncInputs() {
-    inputH.value = rotH.toFixed(1);
-    inputV.value = rotV.toFixed(1);
-}
-
 function render() {
     pre.innerHTML = globe.render([rotH, rotV]);
-    syncInputs();
+    document.getElementById('valH').textContent = Math.round(rotH);
+    document.getElementById('valV').textContent = Math.round(rotV);
+    document.getElementById('valTilt').textContent = tilt;
 }
 
-let dragging = false;
-let lastX = 0;
-let lastY = 0;
-
-pre.addEventListener('mousedown', (e) => {
-    dragging = true;
-    lastX = e.clientX;
-    lastY = e.clientY;
-    pre.classList.add('dragging');
+// Event Listeners
+mapSelect.addEventListener('change', () => {
+    globe = createGlobe(mapSelect.value);
+    render();
 });
 
-window.addEventListener('mousemove', (e) => {
+btn.addEventListener('click', () => {
+    playing = !playing;
+    btn.textContent = playing ? 'Stop' : 'Animate';
+    if (playing) loop();
+});
+
+function loop() {
+    if (!playing) return;
+    rotH = (rotH + 0.5) % 360;
+    render();
+    requestAnimationFrame(loop);
+}
+
+// Slider controls
+const sliders = ['H', 'V', 'Tilt'];
+sliders.forEach(s => {
+    const el = document.getElementById(`input${s}`);
+    el.addEventListener('input', () => {
+        if (s === 'H') rotH = parseFloat(el.value);
+        if (s === 'V') rotV = parseFloat(el.value);
+        if (s === 'Tilt') {
+            tilt = parseFloat(el.value);
+            globe = createGlobe(mapSelect.value);
+        }
+        render();
+    });
+});
+
+// Dragging logic
+let dragging = false;
+let lastX, lastY;
+
+pre.addEventListener('mousedown', e => { 
+  dragging = true; lastX = e.clientX; lastY = e.clientY; 
+  pre.classList.add('dragging');
+});
+
+window.addEventListener('mousemove', e => {
     if (!dragging) return;
-    const dx = e.clientX - lastX;
-    const dy = e.clientY - lastY;
-    rotH = (rotH + dx * 0.5) % 360;
-    rotV = Math.max(-90, Math.min(90, rotV + dy * 0.5));
-    lastX = e.clientX;
-    lastY = e.clientY;
+    rotH += (e.clientX - lastX) * 0.5;
+    rotV += (e.clientY - lastY) * 0.5;
+    lastX = e.clientX; lastY = e.clientY;
     render();
 });
 
 window.addEventListener('mouseup', () => {
     dragging = false;
     pre.classList.remove('dragging');
-});
-
-pre.addEventListener('touchstart', (e) => {
-    const t = e.touches[0];
-    dragging = true;
-    lastX = t.clientX;
-    lastY = t.clientY;
-}, { passive: true });
-
-window.addEventListener('touchmove', (e) => {
-    if (!dragging) return;
-    const t = e.touches[0];
-    const dx = t.clientX - lastX;
-    const dy = t.clientY - lastY;
-    rotH = (rotH + dx * 0.5) % 360;
-    rotV = Math.max(-90, Math.min(90, rotV + dy * 0.5));
-    lastX = t.clientX;
-    lastY = t.clientY;
-    render();
-}, { passive: true });
-
-window.addEventListener('touchend', () => {
-    dragging = false;
-});
-
-let playing = false;
-
-function loop() {
-    if (!playing) return;
-    rotH = (rotH + 0.3) % 360;
-    render();
-    requestAnimationFrame(loop);
-}
-
-btn.addEventListener('click', () => {
-    playing = !playing;
-    btn.textContent = playing ? 'Pause' : 'Animate';
-    inputH.disabled = playing;
-    if (playing) loop();
-});
-
-mapSelect.addEventListener('change', () => {
-    globe = createGlobe(mapSelect.value);
-    render();
-});
-
-inputH.addEventListener('change', () => {
-    rotH = parseFloat(inputH.value) || 0;
-    render();
-});
-
-inputV.addEventListener('change', () => {
-    rotV = Math.max(-90, Math.min(90, parseFloat(inputV.value) || 0));
-    render();
-});
-
-inputTilt.addEventListener('change', () => {
-    tilt = Math.max(-90, Math.min(90, parseFloat(inputTilt.value) || 0));
-    globe = createGlobe(mapSelect.value);
-    render();
 });
 
 render();
