@@ -1,16 +1,23 @@
-
 import { useEffect, useRef, useCallback, useState } from "react";
+const CDN_SRC = "https://cdn.jsdelivr.net/npm/ascii-globe";
+
 function useAsciiGlobe() {
-  const [GlobeLib, setGlobeLib] = useState(null);
+  const [GlobeLib, setGlobeLib] = useState(() => window.Globe ?? null);
 
   useEffect(() => {
-    if (window.AsciiGlobe) {
-      setGlobeLib(() => window.AsciiGlobe);
+    if (window.Globe) {
+      setGlobeLib(() => window.Globe);
+      return;
+    }
+    const existing = document.querySelector(`script[src="${CDN_SRC}"]`);
+    if (existing) {
+      existing.addEventListener("load", () => setGlobeLib(() => window.Globe));
       return;
     }
     const script = document.createElement("script");
-    script.src = "https://cdn.jsdelivr.net/npm/ascii-globe";
+    script.src = CDN_SRC;
     script.onload = () => setGlobeLib(() => window.Globe);
+    script.onerror = () => console.error("[Globe] Failed to load ascii-globe from CDN.");
     document.head.appendChild(script);
   }, []);
 
@@ -52,7 +59,7 @@ export default function Globe({
   marginInline,
   pin = "@",
   pinSize = 1,
-  pins = [],
+  pins,
   tilt = 0,
   speed = 0.7,
   rotation = 0,
@@ -69,6 +76,14 @@ export default function Globe({
   const GlobeLib = useAsciiGlobe();
   const globeRef = useRef(null);
 
+  /* Stabilize pins array — only update the ref when contents change */
+  const pinsRef = useRef(pins ?? []);
+  const pinsJson = JSON.stringify(pins ?? []);
+  useEffect(() => {
+    pinsRef.current = pins ?? [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinsJson]);
+
   /* Build or rebuild the globe instance when options change */
   useEffect(() => {
     if (!GlobeLib) return;
@@ -81,7 +96,7 @@ export default function Globe({
       margin,
       pin,
       pinSize,
-      pins,
+      pins: pinsRef.current,
       tilt,
       speed,
     };
@@ -102,7 +117,7 @@ export default function Globe({
     marginInline,
     pin,
     pinSize,
-    pins,
+    pinsJson,
     tilt,
     speed,
     format,
