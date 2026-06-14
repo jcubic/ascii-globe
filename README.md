@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.4.2-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.4.3-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 ![NPM Downloads](https://img.shields.io/npm/dm/ascii-globe)
 [![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/ascii-globe)](https://www.jsdelivr.com/package/npm/ascii-globe)
@@ -331,12 +331,8 @@ npm run extract   # generate src/maps/ from globe.png and death-star.png
 npm run build     # compile TypeScript to dist/
 ```
 
-## Acknowledgments
-
-World map texture by Ebrahim; [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0); source [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Equirectangular_projection_world_map_without_borders.svg).
-
 ## License
 
-Copyright (c) 2025 [Jakub T. Jankiewicz](https://jakub.jankiewicz.org/)
+Copyright (c) 2026 [Jakub T. Jankiewicz](https://jakub.jankiewicz.org/)
 
 Released under the MIT License. See [LICENSE](https://github.com/jcubic/ascii-globe/blob/master/LICENSE) for details.
