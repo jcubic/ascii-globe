@@ -25,8 +25,10 @@ const globe = new Globe({
   format(type, length) {
     const chars = [' ', '-', '#', '@'];
     const colors = ['', '\x1B[34m', '\x1B[32m', '\x1B[31m'];
-    const text = (chars[type] ?? chars[3]).repeat(length);
-    const color = colors[type] ?? colors[3];
+    // Pins always occupy the last slot; earlier slots shift if border/padding are enabled.
+    const pinsStart = chars.length - 1;
+    const text = (chars[type] ?? chars[pinsStart]).repeat(length);
+    const color = colors[type] ?? colors[pinsStart];
     if (!color) return text;
     return color + text + '\x1B[m';
   },

@@ -114,8 +114,11 @@ function createGlobe(mapName) {
         ...mapName === 'earth' && { padding: 2, borderWidth: 1 },
         pins: theme.pins,
         format(type, length) {
-            const text = (theme.chars[type] ?? theme.chars[3]).repeat(length);
-            const color = theme.colors[type] ?? theme.colors[3];
+            // Pins always occupy the last slot in chars/colors; earlier slots shift
+            // depending on whether border/padding are enabled (see README's format() docs).
+            const pinsStart = theme.chars.length - 1;
+            const text = (theme.chars[type] ?? theme.chars[pinsStart]).repeat(length);
+            const color = theme.colors[type] ?? theme.colors[pinsStart];
             if (!color) return text;
             return `<span style="color:${color}">${text}</span>`;
         }
