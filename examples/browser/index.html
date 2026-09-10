@@ -92,8 +92,8 @@ const earthPins = [
 
 const themes = {
     earth: {
-        chars: [' ', '◦', '#', '@'],
-        colors: ['', '#5599FF', '#0AB338', 'red'],
+        chars: [' ', '#', ' ', ' ', '◦', '@'],
+        colors: ['', '#888', '', '', '#ccc', 'yellow'],
         pins: earthPins,
     },
     'death-star': {
@@ -111,6 +111,7 @@ function createGlobe(mapName) {
         size: 1.4,
         map: Globe.maps[mapName],
         tilt,
+        ...mapName === 'earth' && { padding: 2, borderWidth: 1 },
         pins: theme.pins,
         format(type, length) {
             const text = (theme.chars[type] ?? theme.chars[3]).repeat(length);
