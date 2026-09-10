@@ -20,6 +20,9 @@ Options:
   --margin <number>     Characters around the globe (default: 0)
   --margin-block <n>    Vertical margin (overrides --margin)
   --margin-inline <n>   Horizontal margin (overrides --margin)
+  --padding <number>    Circular gap between the globe and the border (default: 0)
+  --border <char>       Character for a circular border/glow around the globe (default: none)
+  --border-width <n>    Thickness of the border ring in characters (default: 1)
   --pin <char>          Character for location pins (default: @)
   --pin-size <number>   Size of pin markers (default: 1)
   --pins <coords>       Pin locations as lat,long pairs separated by ;
@@ -40,6 +43,7 @@ Examples:
   globe --rotation 20 --pins '52.23,21.01;40.71,-74.01'
   globe --animate --tilt 23.5
   globe --animate --speed 1.4
+  globe --rotation 0 --padding 1 --border '#'
 `;
 
 function parseArgs(argv: string[]) {
@@ -101,6 +105,18 @@ if (marginInline !== undefined && isNaN(marginInline)) {
   process.exit(1);
 }
 
+const padding = args.padding !== undefined ? parseInt(args.padding, 10) : undefined;
+if (padding !== undefined && isNaN(padding)) {
+  process.stderr.write(`Error: invalid padding value "${args.padding}"\n`);
+  process.exit(1);
+}
+
+const borderWidth = args['border-width'] !== undefined ? parseInt(args['border-width'], 10) : undefined;
+if (borderWidth !== undefined && isNaN(borderWidth)) {
+  process.stderr.write(`Error: invalid border-width value "${args['border-width']}"\n`);
+  process.exit(1);
+}
+
 const tilt = args.tilt !== undefined ? parseFloat(args.tilt) : undefined;
 if (tilt !== undefined && isNaN(tilt)) {
   process.stderr.write(`Error: invalid tilt value "${args.tilt}"\n`);
@@ -153,12 +169,22 @@ function loadMapData(filePath: string): string {
 
 const map = args.map ? loadMapData(args.map) : undefined;
 
-const parts = [
-  splitAnsi(args.background ? unescapeAnsi(args.background) : ' '),
-  splitAnsi(args.water ? unescapeAnsi(args.water) : '-'),
-  splitAnsi(args.land ? unescapeAnsi(args.land) : '#'),
-  splitAnsi(args.pin ? unescapeAnsi(args.pin) : '@'),
-];
+// Type slots follow the same order Globe assigns internally:
+// background(0), border?, padding?, water, land, pins...
+// borderWidth is what turns the border ring on; a bare --border falls back
+// to a width of 1 so `--border '#'` alone keeps working as before.
+const effectiveBorderWidth = borderWidth !== undefined ? borderWidth : (args.border !== undefined ? 1 : 0);
+const backgroundPart = splitAnsi(args.background ? unescapeAnsi(args.background) : ' ');
+const hasBorder = effectiveBorderWidth > 0;
+const hasPadding = padding !== undefined && padding > 0;
+
+const parts: Array<{ prefix: string; char: string; suffix: string }> = [backgroundPart];
+if (hasBorder) parts.push(splitAnsi(args.border !== undefined ? unescapeAnsi(args.border) : '#'));
+if (hasPadding) parts.push(backgroundPart);
+parts.push(splitAnsi(args.water ? unescapeAnsi(args.water) : '-'));
+parts.push(splitAnsi(args.land ? unescapeAnsi(args.land) : '#'));
+const pinsStart = parts.length;
+parts.push(splitAnsi(args.pin ? unescapeAnsi(args.pin) : '@'));
 
 const globe = new Globe({
   size,
@@ -166,12 +192,15 @@ const globe = new Globe({
   margin,
   marginBlock,
   marginInline,
+  padding,
+  border: args.border !== undefined ? unescapeAnsi(args.border) : undefined,
+  borderWidth: effectiveBorderWidth,
   tilt,
   speed,
   pinSize: args['pin-size'] !== undefined ? parseFloat(args['pin-size']) : undefined,
   pins,
   format(type, length) {
-    const p = parts[type] ?? parts[3];
+    const p = parts[type] ?? parts[pinsStart];
     const text = p.char.repeat(length);
     if (!p.prefix && !p.suffix) return text;
     return p.prefix + text + p.suffix;

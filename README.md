@@ -1,6 +1,6 @@
 # ![ASCII-Globe](https://github.com/jcubic/ascii-globe/blob/master/.github/logo.svg?raw=true)
 
-[![npm](https://img.shields.io/badge/npm-0.4.4-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
+[![npm](https://img.shields.io/badge/npm-0.5.0-yellow.svg)](https://www.npmjs.com/package/ascii-globe)
 [![github repo](https://img.shields.io/badge/github-repo-orange?logo=github)](https://github.com/jcubic/ascii-globe)
 ![NPM Downloads](https://img.shields.io/npm/dm/ascii-globe)
 [![jsDelivr hits (npm)](https://img.shields.io/jsdelivr/npm/hm/ascii-globe)](https://www.jsdelivr.com/package/npm/ascii-globe)
@@ -89,6 +89,9 @@ Creates a new globe instance.
 | `margin`       | `number` | `0`     | Number of characters around the globe disk.         |
 | `marginBlock`  | `number` | `0`     | Vertical margin (overrides `margin`).               |
 | `marginInline` | `number` | `0`     | Horizontal margin (overrides `margin`).             |
+| `padding`      | `number` | `0`     | Thickness (in characters) of a circular gap between the globe and the border. |
+| `border`       | `string` | `'#'`   | Character used to draw the circular border/glow ring in the default (non-`format`) renderer. Only has an effect when `borderWidth` is set. |
+| `borderWidth`  | `number` | `0`     | Thickness (in characters) of the border ring. This is what turns the ring on — `border` alone does nothing. |
 | `pin`          | `string` | `'@'`   | Default character for location pins. Can include ANSI escape codes. |
 | `pinSize`      | `number` | `1`     | Default size multiplier for pin markers.            |
 | `pins`         | `Pin[]`  | `[]`    | Array of pin locations.                             |
@@ -107,14 +110,35 @@ Creates a new globe instance.
 
 #### `format(type, length)`
 
-When provided, `render()` calls this function for each run of consecutive cells of the same type instead of using the `land`/`water`/`background`/`pin` characters. This lets you wrap output in HTML tags, ANSI codes, or any other markup.
+When provided, `render()` calls this function for each run of consecutive cells of the same type instead of using the `land`/`water`/`background`/`border`/`pin` characters. This lets you wrap output in HTML tags, ANSI codes, or any other markup.
 
-| Type value | Meaning    |
-|------------|------------|
-| `0`        | Background |
-| `1`        | Water      |
-| `2`        | Land       |
-| `3+`       | Pin (index `type - 3` in the `pins` array) |
+Cells are numbered outward-in: background is always `0`, the border ring and padding ring (when enabled) take the next slots in that order, then water, land, and pins. The border ring is enabled by `borderWidth > 0` — the `border` character is only used by the default (non-`format`) renderer, so with `format` you don't need to set it at all. Padding is enabled by `padding > 0`.
+
+| `borderWidth > 0` | `padding > 0` | Type values                                              |
+|--------------------|----------------|-----------------------------------------------------------|
+| no                  | no             | `0` Background, `1` Water, `2` Land, `3+` Pin              |
+| yes                 | no             | `0` Background, `1` Border, `2` Water, `3` Land, `4+` Pin   |
+| no                  | yes            | `0` Background, `1` Padding, `2` Water, `3` Land, `4+` Pin  |
+| yes                 | yes            | `0` Background, `1` Border, `2` Padding, `3` Water, `4` Land, `5+` Pin |
+
+For the pin case, the index into the `pins` array is `type - pinsStartType`, where `pinsStartType` is the last number in the row above (e.g. `3` in the first row, `5` in the last).
+
+Example — a colored glow using `format`, without setting a `border` character:
+
+```javascript
+const globe = new Globe({
+  size: 1,
+  padding: 1,
+  borderWidth: 1,
+  format(type, length) {
+    const chars = [' ', '*', ' ', '-', '#'];
+    const colors = ['', 'cyan', '', '', ''];
+    const text = chars[type].repeat(length);
+    if (!colors[type]) return text;
+    return `<span style="color:${colors[type]}">${text}</span>`;
+  }
+});
+```
 
 Example — HTML colored output:
 
@@ -204,6 +228,9 @@ Options:
   --margin <number>     Characters around the globe (default: 0)
   --margin-block <n>    Vertical margin (overrides --margin)
   --margin-inline <n>   Horizontal margin (overrides --margin)
+  --padding <number>    Circular gap between the globe and the border (default: 0)
+  --border <char>       Character for a circular border/glow around the globe (default: #)
+  --border-width <n>    Thickness of the border ring; turns it on (default: 0, or 1 if --border is set)
   --pin <char>          Character for location pins (default: @)
   --pin-size <number>   Size of pin markers (default: 1)
   --pins <coords>       Pin locations as lat,long pairs separated by ;
@@ -220,6 +247,12 @@ Example with pins (Warsaw and New York):
 ```bash
 globe --rotation 250 --pins '52.23,21.01;40.71,-74.01'
 globe --rotation 250 --pin '\x1b[31m@\x1b[m' --pins '52.23,21.01'
+```
+
+Example with a circular glow around the globe (1 character of padding, `#` border):
+
+```bash
+globe --rotation 0 --padding 1 --border '#'
 ```
 
 Example with a custom map:
